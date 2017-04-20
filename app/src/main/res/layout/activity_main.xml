@@ -23,5 +23,7 @@
     </android.support.design.widget.AppBarLayout>
 
     <include layout="@layout/content_main"/>
+    <include layout="@layout/activity_about"/>
+    <include layout="@layout/activity_help"/>
 
 </android.support.design.widget.CoordinatorLayout>

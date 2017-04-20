@@ -1,5 +1,6 @@
 package com.uwimona.group25.calculuscal;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -66,9 +67,11 @@ public class MainActivity extends AppCompatActivity {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_about) {
+            startActivity(new Intent(getApplicationContext(), AboutActivity.class));
             return true;
         }
         else if (id == R.id.action_help) {
+            startActivity(new Intent(getApplicationContext(), HelpActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -192,16 +195,16 @@ public class MainActivity extends AppCompatActivity {
                     addDigit(9);
                     break;
                 case R.id.btn_limit:
-                    addOperation("\\lim\u2199{");
+                    addOperation(" `lim\u2199{");
                     break;
                 case R.id.btn_cos:
-                    addOperation("\\cos ");
+                    addOperation("`cos ");
                     break;
                 case R.id.btn_sin:
-                    addOperation("\\sin ");
+                    addOperation("`sin ");
                     break;
                 case R.id.btn_tan:
-                    addOperation("\\tan ");
+                    addOperation("`tan ");
                     break;
                 case R.id.btn_decimal:
                     addOperation(".");
@@ -219,13 +222,13 @@ public class MainActivity extends AppCompatActivity {
                     addOperation(")");
                     break;
                 case R.id.btn_ln:
-                    addOperation("\\ln");
+                    addOperation("`ln");
                     break;
                 case R.id.btn_integral:
                     addOperation("\u222B ");
                     break;
                 case R.id.btn_log:
-                    addOperation("\\log_");
+                    addOperation("`log_");
                     break;
                 case R.id.btn_minus:
                     addOperation("-");
@@ -265,6 +268,9 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.btn_diff:
                     addOperation("\u2202");
+                    break;
+                case R.id.btn_infinity:
+                    addOperation("\u221E");
                     break;
                 case R.id.btn_space:
                     handleSpace();

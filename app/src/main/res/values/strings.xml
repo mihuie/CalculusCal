@@ -3,6 +3,7 @@
     <string name="action_about">About</string>
     <string name="action_help">Help</string>
     <string name="text_about">This is the about message</string>
+    <string name="text_help">This is the help message</string>
     <string name="default_text">0</string>
     <string name="addDigit">%d</string>
     <string name="btn_plus">+</string>
