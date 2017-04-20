@@ -4,7 +4,7 @@
     <string name="action_help">Help</string>
     <string name="text_about">This is the about message</string>
     <string name="text_help">This is the help message</string>
-    <string name="default_text">0</string>
+    <string name="text_0">0</string>
     <string name="addDigit">%d</string>
     <string name="btn_plus">+</string>
     <string name="btn_equals">=</string>
@@ -50,4 +50,5 @@
     <string name="btn_exponent">e</string>
     <string name="btn_space">sp</string>
     <string name="btn_evalute">eval</string>
+    <string name="action_graph">Graph</string>
 </resources>

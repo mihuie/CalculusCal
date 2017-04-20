@@ -11,13 +11,15 @@ import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.TextView;
+import com.github.mikephil.charting.charts.LineChart;
 
 import java.util.List;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private String mCurrentText;
+    private String mFunctionF = "";
+    private String mFunctionG = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +28,9 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        ButtonClickHandler buttonClickHandler = new ButtonClickHandler();
+        final LineChart lineChart = (LineChart)findViewById(R.id.chart);
+        lineChart.setNoDataText("");
+
         List<Integer> myList = new ArrayList<>();
         myList.add(R.id.linLayout_1);
         myList.add(R.id.linLayout_2);
@@ -37,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
         myList.add(R.id.linLayout_7);
         myList.add(R.id.linLayout_8);
 
+        ButtonClickHandler buttonClickHandler = new ButtonClickHandler();
         for(Integer i : myList){
             LinearLayout myLinearLayout = (LinearLayout) findViewById(i);
             int count = myLinearLayout.getChildCount();
@@ -48,7 +53,18 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        updateWebView("0");
+        ButtonLongClickHandler buttonLongClickHandler = new ButtonLongClickHandler();
+        final Button buttonC = (Button) findViewById(R.id.btn_clear);
+        buttonC.setOnLongClickListener(buttonLongClickHandler);
+
+        final Button buttonF = (Button) findViewById(R.id.btn_f);
+        buttonF.setOnLongClickListener(buttonLongClickHandler);
+
+        final Button buttonG = (Button) findViewById(R.id.btn_g);
+        buttonG.setOnLongClickListener(buttonLongClickHandler);
+
+        mCurrentText = getString(R.string.text_0);
+        updateWebView(mCurrentText);
     }
 
     @Override
@@ -71,15 +87,10 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         else if (id == R.id.action_help) {
-            startActivity(new Intent(getApplicationContext(), HelpActivity.class));
+            startActivity(new Intent(getApplicationContext(), GraphActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private String getTextViewProblem() {
-        final TextView textViewOutputScreen = (TextView)findViewById(R.id.textView_problem);
-        return (String)textViewOutputScreen.getText();
     }
 
     private void updateWebView(String text){
@@ -98,42 +109,65 @@ public class MainActivity extends AppCompatActivity {
         webView.loadDataWithBaseURL(path, js,  "text/html",  "UTF-8", null);
     }
 
+    private void updateWebViewResult(String text){
+        WebView webView = (WebView)findViewById(R.id.webViewResult);
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        final String path="file:///android_asset/";
+        String js = "<html><head>"
+                + "<link rel='stylesheet' href='"+path+"jqmath-0.4.3.css'>"
+                + "<script src='"+path+"jquery-1.4.3.min.js'></script>"
+                + "<script src='"+path+"jqmath-etc-0.4.6.min.js'></script>"
+                + "</head><body>"
+                + "<script>var s = '$$"+text+"$$';M.parseMath(s);document.write(s);</script></body>";
+        webView.loadDataWithBaseURL(path, js,  "text/html",  "UTF-8", null);
+    }
+
+    private void evaluateInput(){
+
+        updateWebViewResult(mCurrentText);
+
+    }
+
     private void addDigit(int number){
-        final TextView textViewOutputScreen = (TextView)findViewById(R.id.textView_problem);
-        final String current = getTextViewProblem();
         String text;
-        if ("0".equals(current)){
+        if ("0".equals(mCurrentText)){
             text = "" + number;
         }
         else{
-            text = getTextViewProblem() + number;
+            text = mCurrentText + number;
         }
-        textViewOutputScreen.setText(text);
+
         mCurrentText = text;
         updateWebView(text);
     }
 
     private void addOperation(String string){
-        final TextView textViewOutputScreen = (TextView)findViewById(R.id.textView_problem);
-        final String current = getTextViewProblem();
         String text;
-        if ("0".equals(current)){
+        if ("0".equals(mCurrentText)){
             text = string;
         }
         else{
-            text = getTextViewProblem() + string;
+            text = mCurrentText + string;
         }
 
-        textViewOutputScreen.setText(text);
         updateWebView(text);
         mCurrentText = text;
     }
 
     private void clearWebView(){
         updateWebView("0");
-        final TextView textViewOutputScreen = (TextView)findViewById(R.id.textView_problem);
-        textViewOutputScreen.setText("0");
+        updateWebViewResult("");
         mCurrentText = "0";
+    }
+
+    private void backSpace () {
+        String str = mCurrentText;
+        if (str != null && str.length() > 0) {
+            str = str.substring(0, str.length()-1);
+        }
+        mCurrentText = str;
+        updateWebView(mCurrentText);
     }
 
     private void handleSpace(){
@@ -156,6 +190,46 @@ public class MainActivity extends AppCompatActivity {
 
         if (state == 0){
             addOperation(" ");
+        }
+    }
+
+    private void calFunctions(String func){
+
+        if(func.equals("mFunctionF")){
+            if (func.isEmpty()){
+                mFunctionF = mCurrentText;
+                updateWebView(mCurrentText);
+            } else {
+                updateWebView(mFunctionF);
+            }
+        } else if (func.equals("mFunctionG")){
+            if (func.isEmpty()){
+                mFunctionG = mCurrentText;
+                updateWebView(mCurrentText);
+            } else {
+                updateWebView(mFunctionG);
+            }
+        }
+    }
+
+    private class ButtonLongClickHandler implements View.OnLongClickListener {
+        @Override
+        public boolean onLongClick(View v){
+            int id = v.getId();
+            switch (id) {
+                case R.id.btn_clear:
+                    clearWebView();
+                    break;
+                case R.id.btn_f:
+                    calFunctions("mFunctionF");
+                    break;
+                case R.id.btn_g:
+                    calFunctions("mFunctionG");
+                    break;
+                default:
+                    break;
+            }
+            return true;
         }
     }
 
@@ -272,11 +346,14 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.btn_infinity:
                     addOperation("\u221E");
                     break;
+                case R.id.btn_evalute:
+                    evaluateInput();
+                    break;
                 case R.id.btn_space:
                     handleSpace();
                     break;
                 case R.id.btn_clear:
-                    clearWebView();
+                    backSpace();
                     break;
                 default:
                     break;
