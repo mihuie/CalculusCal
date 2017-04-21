@@ -2,8 +2,13 @@
     <string name="app_name">CalculusCal</string>
     <string name="action_about">About</string>
     <string name="action_help">Help</string>
-    <string name="text_about">This is the about message</string>
+    <string name="text_about">CalculusCal solves basic mathematics operations in addition to varying degrees of
+        Calculus problems. CalculusCal uses a custom built parser to resolve all problems.
+        \n\nThis project was completed as a fulfilment of course COMP3901 at the University of West Indies, Mona.
+    </string>
+    <string name="text_group">Members of Group_25\n\u2022 Michael Huie\n\u2022 Andre Boothe\n\u2022 Orren Joseph</string>
     <string name="text_help">This is the help message</string>
+    <string name="website">source code at: <a href="http://github.com/mihuie">CalculusCal</a> </string>
     <string name="text_0">0</string>
     <string name="addDigit">%d</string>
     <string name="btn_plus">+</string>

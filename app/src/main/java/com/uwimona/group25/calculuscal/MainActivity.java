@@ -17,9 +17,10 @@ import java.util.List;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    private String mCurrentText;
-    private String mFunctionF = "";
-    private String mFunctionG = "";
+    private String mCurrentText; // stores text format for display
+//    private String mParser; // stores text format for parser
+    private String mFunctionF = ""; // holds function assigned to g
+    private String mFunctionG = ""; // holds function assigned to g
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,6 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 + "<link rel='stylesheet' href='"+path+"jqmath-0.4.3.css'>"
                 + "<style type='text/css'> fmath.ma-block { display: block; text-align: right; "
                 + "text-indent: 0; padding-top: 0.5cm; page-break-inside: avoid } </style>"
+                + "<style type='text/css'> html {font-size: 130%;} </style>"
                 + "<script src='"+path+"jquery-1.4.3.min.js'></script>"
                 + "<script src='"+path+"jqmath-etc-0.4.6.min.js'></script>"
                 + "</head><body>"
@@ -135,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
         final String path="file:///android_asset/";
         String js = "<html><head>"
                 + "<link rel='stylesheet' href='"+path+"jqmath-0.4.3.css'>"
+                + "<style type='text/css'> html {font-size: 130%;} </style>"
                 + "<script src='"+path+"jquery-1.4.3.min.js'></script>"
                 + "<script src='"+path+"jqmath-etc-0.4.6.min.js'></script>"
                 + "</head><body>"
@@ -152,9 +155,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void evaluateInput(){
-
         updateWebViewResult(mCurrentText);
-
+        updateWebView("0");
     }
 
     private void addDigit(int number){
