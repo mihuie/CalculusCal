@@ -48,7 +48,8 @@
     <string name="btn_plusmn">&#177;</string>
     <string name="btn_infinity">&#8734;</string>
     <string name="btn_exponent">e</string>
-    <string name="btn_space">sp</string>
-    <string name="btn_evalute">eval</string>
+    <string name="btn_space">SP</string>
+    <string name="btn_evaluate">GO</string>
     <string name="action_graph">Graph</string>
+    <string name="btn_plot">XY</string>
 </resources>

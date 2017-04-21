@@ -57,11 +57,18 @@ public class MainActivity extends AppCompatActivity {
         final Button buttonC = (Button) findViewById(R.id.btn_clear);
         buttonC.setOnLongClickListener(buttonLongClickHandler);
 
-        final Button buttonF = (Button) findViewById(R.id.btn_f);
-        buttonF.setOnLongClickListener(buttonLongClickHandler);
+        final Button buttonXY = (Button) findViewById(R.id.btn_plot);
+        buttonXY.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                startActivity(new Intent(getApplicationContext(), GraphActivity.class));
+            }
+        });
 
-        final Button buttonG = (Button) findViewById(R.id.btn_g);
-        buttonG.setOnLongClickListener(buttonLongClickHandler);
+//        final Button buttonF = (Button) findViewById(R.id.btn_f);
+//        buttonF.setOnLongClickListener(buttonLongClickHandler);
+//
+//        final Button buttonG = (Button) findViewById(R.id.btn_g);
+//        buttonG.setOnLongClickListener(buttonLongClickHandler);
 
         mCurrentText = getString(R.string.text_0);
         updateWebView(mCurrentText);
@@ -87,7 +94,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         }
         else if (id == R.id.action_help) {
-            startActivity(new Intent(getApplicationContext(), GraphActivity.class));
+            startActivity(new Intent(getApplicationContext(), HelpActivity.class));
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -346,7 +353,7 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.btn_infinity:
                     addOperation("\u221E");
                     break;
-                case R.id.btn_evalute:
+                case R.id.btn_evaluate:
                     evaluateInput();
                     break;
                 case R.id.btn_space:
