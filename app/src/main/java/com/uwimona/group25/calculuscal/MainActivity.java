@@ -114,6 +114,18 @@ public class MainActivity extends AppCompatActivity {
                 + "</head><body>"
                 + "<script>var s = '$$"+text+"$$';M.parseMath(s);document.write(s);</script></body>";
         webView.loadDataWithBaseURL(path, js,  "text/html",  "UTF-8", null);
+
+        // disabling longClick
+        webView.setLongClickable(true);
+        webView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return true;
+            }
+        });
+
+        //zoom
+//        webView.setInitialScale(120);
     }
 
     private void updateWebViewResult(String text){
@@ -128,6 +140,15 @@ public class MainActivity extends AppCompatActivity {
                 + "</head><body>"
                 + "<script>var s = '$$"+text+"$$';M.parseMath(s);document.write(s);</script></body>";
         webView.loadDataWithBaseURL(path, js,  "text/html",  "UTF-8", null);
+
+        // disabling longClick
+        webView.setLongClickable(true);
+        webView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                return true;
+            }
+        });
     }
 
     private void evaluateInput(){
