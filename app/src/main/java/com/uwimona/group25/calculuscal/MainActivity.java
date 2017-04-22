@@ -12,8 +12,6 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import com.github.mikephil.charting.charts.LineChart;
-
-import java.io.UTFDataFormatException;
 import java.util.List;
 import java.util.ArrayList;
 
@@ -180,6 +178,14 @@ public class MainActivity extends AppCompatActivity {
                     text = getCurrentText() + str;
                 case Utils.POWER:
                     break;
+                case Utils.ADD:
+                    break;
+                case Utils.MULTIPLY:
+                    break;
+                case Utils.DIVIDE:
+                    break;
+                case Utils.TOWARDS:
+                    break;
                 default:
                     text = str;
                     break;
@@ -252,10 +258,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void handleSpace(){
+    private void handleSPKey(){
         int state = 0;
 
-        if (getCurrentText().endsWith(getString(R.string.text_0))) {
+        if (getCurrentText().endsWith(getString(R.string.text_0)) ||
+                getCurrentText().endsWith(Utils.ROOT)) {
             state =1;
         } else {
             for (int i = getCurrentText().length() - 1; i >= 0; --i) {
@@ -277,25 +284,6 @@ public class MainActivity extends AppCompatActivity {
 
         if ((state == 0) && (!getCurrentText().endsWith(Utils.SPACE))) addOperation(Utils.SPACE);
     }
-
-//    private void calFunctions(String func){
-//
-//        if(func.equals("mFunctionF")){
-//            if (func.isEmpty()){
-//                mFunctionF = mCurrentText;
-//                updateWebView(mCurrentText);
-//            } else {
-//                updateWebView(mFunctionF);
-//            }
-//        } else if (func.equals("mFunctionG")){
-//            if (func.isEmpty()){
-//                mFunctionG = mCurrentText;
-//                updateWebView(mCurrentText);
-//            } else {
-//                updateWebView(mFunctionG);
-//            }
-//        }
-//    }
 
     private class ButtonLongClickHandler implements View.OnLongClickListener {
         @Override
@@ -435,7 +423,7 @@ public class MainActivity extends AppCompatActivity {
                     evaluateInput();
                     break;
                 case R.id.btn_space:
-                    handleSpace();
+                    handleSPKey();
                     break;
                 case R.id.btn_clear:
                     backspace();

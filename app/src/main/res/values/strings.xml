@@ -7,7 +7,12 @@
         \n\nThis project was completed as a fulfilment of course COMP3901 at the University of West Indies, Mona.
     </string>
     <string name="text_group">Members of Group_25\n\u2022 Michael Huie\n\u2022 Andre Boothe\n\u2022 Orren Joseph</string>
-    <string name="text_help">This is the help message</string>
+    <string name="text_help">\u2022<b> XY key </b>is used to generate graph from the equation supplied.
+        \n\n\u2022<b> SP Key</b> is used to escape format for function such as log and ^ keys.
+        \n\n\u2022<b> GO Key</b> evaluates the information you supply.
+        \n\n\u2022<b> C key</b> backspace single character from input while a long press clears all data.
+        \n\nNote: When the ^ key is pressed nothing appears on screen until power value entered.
+    </string>
     <string name="website">source code at: <a href="http://github.com/mihuie">CalculusCal</a> </string>
     <string name="text_0">0</string>
     <string name="addDigit">%d</string>
