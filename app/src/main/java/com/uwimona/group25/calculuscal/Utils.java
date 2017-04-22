@@ -1,12 +1,15 @@
 package com.uwimona.group25.calculuscal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Created by michael on 4/21/17.
  */
 public final class Utils {
 
+    final static String SPACE = " ";
     final static String DIVIDE = "/";
     final static String MULTIPLY = "*";
     final static String MINUS = "-";
@@ -33,6 +36,13 @@ public final class Utils {
     final static String DIFF = "\u2202";
     final static String LIMIT = "`lim\u2199{";
     final static String TOWARDS = "\u2192";
+
+    final static ArrayList<String> basicOperands = new ArrayList<>(Arrays.asList(DIVIDE, MULTIPLY, MINUS, ADD, POWER, EQUAL));
+    final static ArrayList<String> advanceOperands = new ArrayList<>(Arrays.asList(LN, COS, SIN, TAN, LOG));
+    final static ArrayList<String> noDuplicates = new ArrayList<>(Arrays.asList(LN, COS, SIN, TAN, LOG, DIVIDE,
+            MULTIPLY, MINUS, ADD, POWER, EQUAL, DECIMAL, FUNCTIONF, FUNCTIONG, ROOT, INTEGRAL, INFINITY, TOWARDS,
+            EXPONENT, VARIABLEX, VARIABLEY, PI));
+
 
     private Utils(){
 
@@ -72,8 +82,28 @@ public final class Utils {
         return constants;
     }
 
-    public static boolean isOperator(String c){
-        return getOperands().contains(c);
+    public static boolean isBasicOperator(String c){
+        return getBasicOperators().contains(c);
+    }
+
+    public static boolean isAdvancedOperator(String c){
+        return getAdvancedOperators().contains(c);
+    }
+
+    public static boolean isInNoDuplicates(String c){
+        return getNoDuplicates().contains(c);
+    }
+
+    public static ArrayList<String> getBasicOperators(){
+        return basicOperands;
+    }
+
+    public static ArrayList<String> getAdvancedOperators(){
+        return advanceOperands;
+    }
+
+    public static ArrayList<String> getNoDuplicates(){
+        return noDuplicates;
     }
 
     public static String evaluate(final String str){

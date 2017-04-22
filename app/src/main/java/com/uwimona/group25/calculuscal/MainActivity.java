@@ -13,11 +13,13 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import com.github.mikephil.charting.charts.LineChart;
 
+import java.io.UTFDataFormatException;
 import java.util.List;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private String mCurrentText; // stores text format for display
+//    private String mResultText; // store text return from parser
 //    private String mFunctionF = ""; // holds function assigned to g
 //    private String mFunctionG = ""; // holds function assigned to g
 
@@ -109,7 +111,7 @@ public class MainActivity extends AppCompatActivity {
                 + "<link rel='stylesheet' href='"+path+"jqmath-0.4.3.css'>"
                 + "<style type='text/css'> fmath.ma-block { display: block; text-align: right; "
                 + "text-indent: 0; padding-top: 0.5cm; page-break-inside: avoid } </style>"
-                + "<style type='text/css'> html {font-size: 130%;} </style>"
+                + "<style type='text/css'> html {font-size: 120%;} </style>"
                 + "<script src='"+path+"jquery-1.4.3.min.js'></script>"
                 + "<script src='"+path+"jqmath-etc-0.4.6.min.js'></script>"
                 + "</head><body>"
@@ -125,8 +127,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //zoom
-//        webView.setInitialScale(120);
     }
 
     private void updateWebViewResult(String text){
@@ -136,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         final String path="file:///android_asset/";
         String js = "<html><head>"
                 + "<link rel='stylesheet' href='"+path+"jqmath-0.4.3.css'>"
-                + "<style type='text/css'> html {font-size: 130%;} </style>"
+                + "<style type='text/css'> html {font-size: 120%;} </style>"
                 + "<script src='"+path+"jquery-1.4.3.min.js'></script>"
                 + "<script src='"+path+"jqmath-etc-0.4.6.min.js'></script>"
                 + "</head><body>"
@@ -156,7 +156,9 @@ public class MainActivity extends AppCompatActivity {
     private void updateCurrentText(String str){
         if (str.equals(" ") || str.equals("") || str.isEmpty()){
             mCurrentText = getString(R.string.text_0);
-        } else { mCurrentText = str; }
+        } else {
+            mCurrentText = str;
+        }
     }
 
     private String getCurrentText(){
@@ -168,25 +170,65 @@ public class MainActivity extends AppCompatActivity {
         updateWebView(getString(R.string.text_0));
     }
 
-    private void addOperation(String str){
+    private void addOperation(String str) {
         String text = " ";
-        if ("0".equals(getCurrentText())){
+        if ("0".equals(getCurrentText())) {
             switch (str) {
                 case " ":
+                    break;
+                case Utils.DECIMAL:
+                    text = getCurrentText() + str;
+                case Utils.POWER:
                     break;
                 default:
                     text = str;
                     break;
             }
+        } else if (getCurrentText().contains(Utils.EQUAL) && (str.equals(Utils.EQUAL))) {
+            text = getCurrentText();
+        } else if (getCurrentText().endsWith(Utils.LIMIT) && (Utils.getOperands().contains(str))) {
+            text = getCurrentText();
+        } else if (getCurrentText().endsWith(Utils.DECIMAL) && (Utils.getBasicOperators().contains(str))) {
+            text = str.equals(Utils.EQUAL) ? getCurrentText() + "0" + str : getCurrentText();
+        } else if (getCurrentText().endsWith(Utils.LEFTBRACKET) && (Utils.getBasicOperators().contains(str))) {
+            text = str.equals(Utils.MINUS) ? getCurrentText() + str : getCurrentText();
+        } else if (Utils.isBasicOperator(str)) {
+            for (String operator : Utils.getBasicOperators()) {
+                if (getCurrentText().endsWith(operator) && !str.equals(Utils.MINUS)) {
+                    text = getCurrentText();
+                    break;
+                } else {
+                    text = getCurrentText().endsWith(operator + Utils.MINUS) ? getCurrentText() : getCurrentText() + str;
+                }
+            }
+        } else if (Utils.isAdvancedOperator(str)) {
+            for (String operator : Utils.getAdvancedOperators()) {
+                if (getCurrentText().endsWith(operator)) {
+                    text = getCurrentText();
+                    break;
+                } else {
+                    text = getCurrentText() + str;
+                }
+            }
+        } else if (Utils.getNoDuplicates().contains(str)){
+            for (String i : Utils.getNoDuplicates()) {
+                if (getCurrentText().endsWith(i) && str.equals(i)) {
+                    text = getCurrentText();
+                    break;
+                } else {
+                    text = getCurrentText() + str;
+                }
+            }
+        } else {
+            text = getCurrentText() + str;
         }
-        else{
-            text = mCurrentText + str;
-        }
+
+        // s
         updateWebView(text);
         updateCurrentText(text);
     }
 
-    private void clearWebView(){
+    private void clearAll(){
         updateWebView(getString(R.string.text_0));
         updateWebViewResult("");
         updateCurrentText(getString(R.string.text_0));
@@ -212,29 +254,28 @@ public class MainActivity extends AppCompatActivity {
 
     private void handleSpace(){
         int state = 0;
-        for (int i = getCurrentText().length() - 1; i >= 0; --i) {
-            if (getCurrentText().charAt(i) == '{') {
-                addOperation("}");
-                state = 1;
-                break;
-            } else if (getCurrentText().charAt(i) == '/') {
-                addOperation(" ");
-                state = 1;
-                break;
-            } else if (getCurrentText().charAt(i) == '^') {
-                addOperation(" ");
-                state = 1;
-                break;
+
+        if (getCurrentText().endsWith(getString(R.string.text_0))) {
+            state =1;
+        } else {
+            for (int i = getCurrentText().length() - 1; i >= 0; --i) {
+                if ((getCurrentText().charAt(i) == '{') && !getCurrentText().endsWith("}")) {
+                    addOperation("}");
+                    state = 1;
+                    break;
+                } else if (getCurrentText().charAt(i) == '/') {
+                    addOperation(Utils.SPACE);
+                    state = 1;
+                    break;
+                } else if (getCurrentText().charAt(i) == '^') {
+                    addOperation(Utils.SPACE);
+                    state = 1;
+                    break;
+                }
             }
-//            } else if (mCurrentText.charAt(i) == '0'){
-//                state = 1;
-//                break;
-//            }
         }
 
-        if (state == 0){
-            addOperation(" ");
-        }
+        if ((state == 0) && (!getCurrentText().endsWith(Utils.SPACE))) addOperation(Utils.SPACE);
     }
 
 //    private void calFunctions(String func){
@@ -262,7 +303,7 @@ public class MainActivity extends AppCompatActivity {
             int id = v.getId();
             switch (id) {
                 case R.id.btn_clear:
-                    clearWebView();
+                    clearAll();
                     break;
                 case R.id.btn_f:
 //                    calFunctions("mFunctionF");
