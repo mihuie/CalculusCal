@@ -18,9 +18,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private String mCurrentText; // stores text format for display
-//    private String mParser; // stores text format for parser
-    private String mFunctionF = ""; // holds function assigned to g
-    private String mFunctionG = ""; // holds function assigned to g
+//    private String mFunctionF = ""; // holds function assigned to g
+//    private String mFunctionG = ""; // holds function assigned to g
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +70,8 @@ public class MainActivity extends AppCompatActivity {
 //        final Button buttonG = (Button) findViewById(R.id.btn_g);
 //        buttonG.setOnLongClickListener(buttonLongClickHandler);
 
-        mCurrentText = getString(R.string.text_0);
-        updateWebView(mCurrentText);
+        updateCurrentText(getString(R.string.text_0));
+        updateWebView(getCurrentText());
     }
 
     @Override
@@ -154,68 +153,83 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void updateCurrentText(String str){
+        if (str.equals(" ") || str.equals("") || str.isEmpty()){
+            mCurrentText = getString(R.string.text_0);
+        } else { mCurrentText = str; }
+    }
+
+    private String getCurrentText(){
+        return mCurrentText;
+    }
+
     private void evaluateInput(){
-        updateWebViewResult(mCurrentText);
-        updateWebView("0");
+        updateWebViewResult(getCurrentText());
+        updateWebView(getString(R.string.text_0));
     }
 
-    private void addDigit(int number){
-        String text;
-        if ("0".equals(mCurrentText)){
-            text = "" + number;
+    private void addOperation(String str){
+        String text = " ";
+        if ("0".equals(getCurrentText())){
+            switch (str) {
+                case " ":
+                    break;
+                default:
+                    text = str;
+                    break;
+            }
         }
         else{
-            text = mCurrentText + number;
+            text = mCurrentText + str;
         }
-
-        mCurrentText = text;
         updateWebView(text);
-    }
-
-    private void addOperation(String string){
-        String text;
-        if ("0".equals(mCurrentText)){
-            text = string;
-        }
-        else{
-            text = mCurrentText + string;
-        }
-
-        updateWebView(text);
-        mCurrentText = text;
+        updateCurrentText(text);
     }
 
     private void clearWebView(){
-        updateWebView("0");
+        updateWebView(getString(R.string.text_0));
         updateWebViewResult("");
-        mCurrentText = "0";
+        updateCurrentText(getString(R.string.text_0));
     }
 
-    private void backSpace () {
-        String str = mCurrentText;
+    private void backspace() {
+        String str = getCurrentText();
+
         if (str != null && str.length() > 0) {
+            for(String operand : Utils.getOperands()){
+                if(str.endsWith(operand)) {
+                    str = str.substring(0, str.length() - operand.length());
+                    updateCurrentText(str);
+                    updateWebView(getCurrentText());
+                    return;
+                }
+            }
             str = str.substring(0, str.length()-1);
+            updateCurrentText(str);
+            updateWebView(getCurrentText());
         }
-        mCurrentText = str;
-        updateWebView(mCurrentText);
     }
 
     private void handleSpace(){
         int state = 0;
-        for (int i = mCurrentText.length() - 1; i >= 0; --i) {
-            if (mCurrentText.charAt(i) == '{') {
+        for (int i = getCurrentText().length() - 1; i >= 0; --i) {
+            if (getCurrentText().charAt(i) == '{') {
                 addOperation("}");
                 state = 1;
                 break;
-            } else if (mCurrentText.charAt(i) == '/') {
+            } else if (getCurrentText().charAt(i) == '/') {
                 addOperation(" ");
                 state = 1;
                 break;
-            } else if (mCurrentText.charAt(i) == '^'){
+            } else if (getCurrentText().charAt(i) == '^') {
                 addOperation(" ");
                 state = 1;
                 break;
             }
+//            } else if (mCurrentText.charAt(i) == '0'){
+//                state = 1;
+//                break;
+//            }
         }
 
         if (state == 0){
@@ -223,24 +237,24 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void calFunctions(String func){
-
-        if(func.equals("mFunctionF")){
-            if (func.isEmpty()){
-                mFunctionF = mCurrentText;
-                updateWebView(mCurrentText);
-            } else {
-                updateWebView(mFunctionF);
-            }
-        } else if (func.equals("mFunctionG")){
-            if (func.isEmpty()){
-                mFunctionG = mCurrentText;
-                updateWebView(mCurrentText);
-            } else {
-                updateWebView(mFunctionG);
-            }
-        }
-    }
+//    private void calFunctions(String func){
+//
+//        if(func.equals("mFunctionF")){
+//            if (func.isEmpty()){
+//                mFunctionF = mCurrentText;
+//                updateWebView(mCurrentText);
+//            } else {
+//                updateWebView(mFunctionF);
+//            }
+//        } else if (func.equals("mFunctionG")){
+//            if (func.isEmpty()){
+//                mFunctionG = mCurrentText;
+//                updateWebView(mCurrentText);
+//            } else {
+//                updateWebView(mFunctionG);
+//            }
+//        }
+//    }
 
     private class ButtonLongClickHandler implements View.OnLongClickListener {
         @Override
@@ -251,10 +265,10 @@ public class MainActivity extends AppCompatActivity {
                     clearWebView();
                     break;
                 case R.id.btn_f:
-                    calFunctions("mFunctionF");
+//                    calFunctions("mFunctionF");
                     break;
                 case R.id.btn_g:
-                    calFunctions("mFunctionG");
+//                    calFunctions("mFunctionG");
                     break;
                 default:
                     break;
@@ -269,112 +283,112 @@ public class MainActivity extends AppCompatActivity {
             int id = v.getId();
             switch (id) {
                 case R.id.btn_0:
-                    addDigit(0);
+                    addOperation("0");
                     break;
                 case R.id.btn_1:
-                    addDigit(1);
+                    addOperation("1");
                     break;
                 case R.id.btn_2:
-                    addDigit(2);
+                    addOperation("2");
                     break;
                 case R.id.btn_3:
-                    addDigit(3);
+                    addOperation("3");
                     break;
                 case R.id.btn_4:
-                    addDigit(4);
+                    addOperation("4");
                     break;
                 case R.id.btn_5:
-                    addDigit(5);
+                    addOperation("5");
                     break;
                 case R.id.btn_6:
-                    addDigit(6);
+                    addOperation("6");
                     break;
                 case R.id.btn_7:
-                    addDigit(7);
+                    addOperation("7");
                     break;
                 case R.id.btn_8:
-                    addDigit(8);
+                    addOperation("8");
                     break;
                 case R.id.btn_9:
-                    addDigit(9);
+                    addOperation("9");
                     break;
                 case R.id.btn_limit:
-                    addOperation(" `lim\u2199{");
+                    addOperation(Utils.LIMIT);
                     break;
                 case R.id.btn_cos:
-                    addOperation("`cos ");
+                    addOperation(Utils.COS);
                     break;
                 case R.id.btn_sin:
-                    addOperation("`sin ");
+                    addOperation(Utils.SIN);
                     break;
                 case R.id.btn_tan:
-                    addOperation("`tan ");
+                    addOperation(Utils.TAN);
                     break;
                 case R.id.btn_decimal:
-                    addOperation(".");
+                    addOperation(Utils.DECIMAL);
                     break;
                 case R.id.btn_divide:
-                    addOperation("/");
+                    addOperation(Utils.DIVIDE);
                     break;
                 case R.id.btn_exponent:
-                    addOperation("e");
+                    addOperation(Utils.EXPONENT);
                     break;
                 case R.id.btn_leftBracket:
-                    addOperation("(");
+                    addOperation(Utils.LEFTBRACKET);
                     break;
                 case R.id.btn_rightBracket:
-                    addOperation(")");
+                    addOperation(Utils.RIGHTBRACKET);
                     break;
                 case R.id.btn_ln:
-                    addOperation("`ln");
+                    addOperation(Utils.LN);
                     break;
                 case R.id.btn_integral:
-                    addOperation("\u222B ");
+                    addOperation(Utils.INTEGRAL);
                     break;
                 case R.id.btn_log:
-                    addOperation("`log_");
+                    addOperation(Utils.LOG);
                     break;
                 case R.id.btn_minus:
-                    addOperation("-");
+                    addOperation(Utils.MINUS);
                     break;
                 case R.id.btn_plus:
-                    addOperation("+");
+                    addOperation(Utils.ADD);
                     break;
                 case R.id.btn_multiply:
-                    addOperation("*");
+                    addOperation(Utils.MULTIPLY);
                     break;
                 case R.id.btn_pi:
-                    addOperation("\u03C0 ");
+                    addOperation(Utils.PI);
                     break;
                 case R.id.btn_power:
-                    addOperation("^");
+                    addOperation(Utils.POWER);
                     break;
                 case R.id.btn_root:
-                    addOperation("\u221A{");
+                    addOperation(Utils.ROOT);
                     break;
                 case R.id.btn_towards:
-                    addOperation("\u2192");
+                    addOperation(Utils.TOWARDS);
                     break;
                 case R.id.btn_equals:
-                    addOperation("=");
+                    addOperation(Utils.EQUAL);
                     break;
                 case R.id.btn_f:
-                    addOperation("f");
+                    addOperation(Utils.FUNCTIONF);
                     break;
                 case R.id.btn_x:
-                    addOperation("x");
+                    addOperation(Utils.VARIABLEX);
                     break;
                 case R.id.btn_y:
-                    addOperation("y");
+                    addOperation(Utils.VARIABLEY);
                     break;
                 case R.id.btn_g:
-                    addOperation("g");
+                    addOperation(Utils.FUNCTIONG);
                     break;
                 case R.id.btn_diff:
-                    addOperation("\u2202");
+                    addOperation(Utils.DIFF);
                     break;
                 case R.id.btn_infinity:
-                    addOperation("\u221E");
+                    addOperation(Utils.INFINITY);
                     break;
                 case R.id.btn_evaluate:
                     evaluateInput();
@@ -383,7 +397,7 @@ public class MainActivity extends AppCompatActivity {
                     handleSpace();
                     break;
                 case R.id.btn_clear:
-                    backSpace();
+                    backspace();
                     break;
                 default:
                     break;
