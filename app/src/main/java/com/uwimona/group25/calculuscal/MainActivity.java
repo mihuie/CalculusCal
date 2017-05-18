@@ -97,6 +97,10 @@ public class MainActivity extends AppCompatActivity {
             startActivity(new Intent(getApplicationContext(), HelpActivity.class));
             return true;
         }
+        else if (id == R.id.action_script) {
+            startActivity(new Intent(getApplicationContext(), ScriptActivity.class));
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 

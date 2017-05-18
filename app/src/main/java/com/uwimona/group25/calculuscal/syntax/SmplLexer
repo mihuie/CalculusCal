@@ -1,0 +1,243 @@
+package smpl.syntax;
+
+/* Specification for ArithExp tokens */
+
+// user customisations
+import java_cup.runtime.*;
+
+// Jlex directives
+    
+%%
+
+%cup
+%public
+
+%class SmplLexer
+
+%type java_cup.runtime.Symbol
+
+%eofval{
+	return new Symbol(sym.EOF);
+%eofval}
+
+%eofclose false
+
+%char
+%line
+
+%{
+    public int getChar() {
+	return yychar + 1;
+    }
+
+    public int getColumn() {
+    	return yycolumn + 1;
+    }
+
+    public int getLine() {
+	return yyline + 1;
+    }
+
+    public String getText() {
+	return yytext();
+    }
+%}
+
+nl = [\n\r]
+
+cc = ([\b\f]|{nl})
+
+ws = {cc}|[\t ]
+
+alpha = [a-zA-Z_]
+
+num = [0-9]
+
+alphanum = {alpha}|{num}
+
+real = ({num}*\.{num}+)|({num}+\.{num}*)
+
+sign = ("+"|"-")
+
+varchars = {alphanum}|{sign}
+
+hex = [0-9a-f]|[0-9A-F]
+
+ch = [^\\\n\"]|"\\".|{hex}{4}
+
+//"	// comment stop Java IDE from showing rest of code as if it's inside quotes
+
+any = .|{ws}
+
+mini_comment = (\/\*([^*]|{nl}|(\*+([^*\/]|{nl})))*\*+\/)|(\/\/.*)
+
+comment = (\/\*([^*]|{nl}|{mini_comment}|(\*+([^*\/]|{nl}|{mini_comment})))*\*+\/)|(\/\/.*)
+
+%%
+
+<YYINITIAL>	{nl}	{//skip newline, but reset char counter
+			 yychar = 0;
+			}
+<YYINITIAL>	{ws}	{
+			 // skip whitespace
+			}
+
+
+
+<YYINITIAL>	{ws}"+"{ws}|"+"	{return new Symbol(sym.PLUS);}
+<YYINITIAL>	{ws}"-"{ws}|"-"	{return new Symbol(sym.MINUS);}
+<YYINITIAL> "neg-"			{return new Symbol(sym.NEG);}
+<YYINITIAL>	{ws}"*"{ws}|"*"	{return new Symbol(sym.MUL);}
+<YYINITIAL>	"/"	{return new Symbol(sym.DIV);}
+<YYINITIAL>	"%"	{return new Symbol(sym.MOD);}
+<YYINITIAL>	{ws}"^"{ws}|"^"	{return new Symbol(sym.POW);}
+
+<YYINITIAL> {ws}":="{ws}	{return new Symbol(sym.ASSIGN);}
+
+<YYINITIAL> {ws}"&"{ws}	{return new Symbol(sym.BAND);}
+<YYINITIAL> {ws}"|"{ws}	{return new Symbol(sym.BOR);}
+<YYINITIAL> "~"	{return new Symbol(sym.BNOT);}
+	
+<YYINITIAL> {ws}"="{ws} 	{return new Symbol(sym.EQ);}
+<YYINITIAL> {ws}">"{ws} 	{return new Symbol(sym.GT);}
+<YYINITIAL> {ws}"<"{ws} 	{return new Symbol(sym.LT);}
+<YYINITIAL> {ws}"<="{ws} 	{return new Symbol(sym.LE);}
+<YYINITIAL> {ws}">="{ws} 	{return new Symbol(sym.GE);}
+<YYINITIAL> {ws}"!="{ws} 	{return new Symbol(sym.NEQ);}
+
+<YYINITIAL> "not"{ws} 	{return new Symbol(sym.LNOT);}
+<YYINITIAL> {ws}"and"{ws} 	{return new Symbol(sym.LAND);}
+<YYINITIAL> {ws}"or"{ws} 	{return new Symbol(sym.LOR);}
+
+<YYINITIAL>	"{"	{return new Symbol(sym.LBRACE);}
+<YYINITIAL>	"}"	{return new Symbol(sym.RBRACE);}
+<YYINITIAL>	"("	{return new Symbol(sym.LPAREN);}
+<YYINITIAL>	")"	{return new Symbol(sym.RPAREN);}
+<YYINITIAL>	"["	{return new Symbol(sym.LBRACKET);}
+<YYINITIAL>	"]"	{return new Symbol(sym.RBRACKET);}
+<YYINITIAL> ","	{return new Symbol(sym.COMMA);}
+<YYINITIAL> "."	{return new Symbol(sym.PERIOD);}
+<YYINITIAL> ";"	{return new Symbol(sym.SEMI);}
+<YYINITIAL> ":"	{return new Symbol(sym.COLON);}
+<YYINITIAL> "@"	{return new Symbol(sym.LSTCONCAT);}
+<YYINITIAL> "[:"	{return new Symbol(sym.LVEC);}
+<YYINITIAL> ":]"	{return new Symbol(sym.RVEC);}
+
+// KETWORDS
+<YYINITIAL> "let"	{return new Symbol(sym.LET);}
+<YYINITIAL> "be"	{return new Symbol(sym.BE);}
+<YYINITIAL> "proc"	{return new Symbol(sym.PROC);}
+
+<YYINITIAL> "pair?"	{return new Symbol(sym.PAIRCHECK);}
+<YYINITIAL> "pair" 	{return new Symbol(sym.PAIR);}
+<YYINITIAL> "car" 	{return new Symbol(sym.CAR);}
+<YYINITIAL> "cdr" 	{return new Symbol(sym.CDR);}
+
+<YYINITIAL> "#e"	{return new Symbol(sym.EMPTYLIST);}
+<YYINITIAL> "list" 	{return new Symbol(sym.LIST);}
+<YYINITIAL> "size" 	{return new Symbol(sym.SIZE);}
+<YYINITIAL> "substr"	{return new Symbol(sym.SUBSTR);}
+
+<YYINITIAL> "print" 	{return new Symbol(sym.PRINT);}
+<YYINITIAL> "println" 	{return new Symbol(sym.PRINTLN);}
+
+<YYINITIAL> "eqv?" 	{return new Symbol(sym.EQV);}
+<YYINITIAL> "equal?" 	{return new Symbol(sym.EQUAL);}
+
+<YYINITIAL> "call" 	{return new Symbol(sym.CALL);}
+<YYINITIAL> "lazy" 	{return new Symbol(sym.LAZY);}
+<YYINITIAL> "def"  	{return new Symbol(sym.DEF);}
+
+<YYINITIAL> "read"  	{return new Symbol(sym.READ);}
+<YYINITIAL> "readint"  	{return new Symbol(sym.READINT);}
+
+<YYINITIAL> "if"  	{return new Symbol(sym.IF);}
+<YYINITIAL> "then"  {return new Symbol(sym.THEN);}
+<YYINITIAL> "else"  {return new Symbol(sym.ELSE);}
+<YYINITIAL> "case"  {return new Symbol(sym.CASE);}
+
+//new additions
+<YYINITIAL> "SIN"  {return new Symbol(sym.SIN);}
+<YYINITIAL> "COS"  {return new Symbol(sym.COS);}
+<YYINITIAL> "TAN" {return new Symbol(sym.TAN);}
+<YYINITIAL> "SEC"  {return new Symbol(sym.SEC);}
+<YYINITIAL> "COSEC"  {return new Symbol(sym.COSEC);}
+<YYINITIAL> "COT"  {return new Symbol(sym.COT);}
+
+<YYINITIAL> "diff"|"DIFF"  {return new Symbol(sym.DIFFERENTIATE);}
+
+<YYINITIAL> "plot"  {return new Symbol(sym.PLOT);}
+<YYINITIAL> "in"  {return new Symbol(sym.IN);}
+<YYINITIAL> "for"  {return new Symbol(sym.FOR);}
+
+<YYINITIAL> "limit"  {return new Symbol(sym.LIMIT);}
+<YYINITIAL> "as"  {return new Symbol(sym.AS);}
+<YYINITIAL> "->"  {return new Symbol(sym.APPROACHES);}
+
+<YYINITIAL> "INFINITY"|"infinity"| "Infinity"  {return new Symbol(sym.INFINITY);}
+
+<YYINITIAL> "LN"|"ln"  {return new Symbol(sym.LOG);}
+
+<YYINITIAL> "FACTORIAL" | "factorial"|"!"	{return new Symbol(sym.FACTORIAL);}
+
+<YYINITIAL> "root" | "ROOT"	{return new Symbol(sym.ROOT);}
+
+<YYINITIAL> "pi" | "PI"	{return new Symbol(sym.PI);}
+
+<YYINITIAL> "INT" | "int"	{return new Symbol(sym.INTEGRATE);}
+
+<YYINITIAL> "taylor" | "TAYLOR"	{return new Symbol(sym.TAYLOR);}
+
+<YYINITIAL> "cont" | "CONT"	{return new Symbol(sym.CONTINUITY);}
+
+
+<YYINITIAL>	{sign}?{real}	{
+				// REAL NUMBER
+				return new Symbol(sym.REAL,
+					new Double(yytext()));
+			}
+
+<YYINITIAL> {sign}?{num}+ 	{
+		       	// INTEGER
+		    	return new Symbol(sym.INTEGER, 
+					new Integer(yytext()));
+	    	}
+
+<YYINITIAL> {sign}?"#x"{hex}+	{
+				// HEXADECIMAL INTEGER
+				return new Symbol(sym.INTEGER,
+					Integer.parseInt(yytext().replace("#x", ""), 16));
+
+			}
+
+
+<YYINITIAL> {sign}?"#b"[01]+	{
+				// BINARY INTEGER
+				return new Symbol(sym.INTEGER,
+					Integer.parseInt(yytext().replace("#b", ""), 2));
+
+			}
+
+<YYINITIAL> "#c"{ch}	{
+				return new Symbol(sym.CHARACTER,
+					yytext().replace("#c",""));
+			}
+
+<YYINITIAL> "\""{ch}*"\""	{
+				return new Symbol(sym.STRING,
+					yytext().substring(1, yytext().length()-1));
+			}
+
+<YYINITIAL> "#t" {return new Symbol(sym.BOOL, true);}
+<YYINITIAL> "#f" {return new Symbol(sym.BOOL, false);}
+
+
+
+
+<YYINITIAL> {varchars}* {
+				// VARIABLE
+				return new Symbol(sym.VARIABLE, yytext());
+			}
+<YYINITIAL>	{comment}	{
+			 // skip comment
+			}

@@ -26,5 +26,6 @@
     <include layout="@layout/activity_about"/>
     <include layout="@layout/activity_help"/>
     <include layout="@layout/activity_graph"/>
+    <include layout="@layout/activity_script"/>
 
 </android.support.design.widget.CoordinatorLayout>
