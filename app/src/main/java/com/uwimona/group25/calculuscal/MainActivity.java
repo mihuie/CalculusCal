@@ -6,6 +6,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -152,6 +153,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateWebViewResult(String text){
+//        Log.v("result", text);
         WebView webView = (WebView)findViewById(R.id.webViewResult);
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
@@ -368,20 +370,26 @@ public class MainActivity extends AppCompatActivity {
             parser = new SmplParser(new SmplLexer(reader));
             program = (SmplProgram) parser.parse().value;
         } catch (Exception e) {
-            updateWebViewResult("Parse Error: " + e.getMessage());
+            updateWebViewResult("E" + e.getMessage());
         }
 
         String testResult = "";
         if(program != null)
             try {
                 Object result = program.visit(interp, new Environment());
-                testResult = result.toString();
-                updateWebViewResult(result.toString());
+//                Log.v("result", result.toString());
+                if (result.toString().contains(" * x")){
+                    testResult = result.toString().replace(" * x", "x");
+                } else {
+                    testResult = result.toString();
+                }
+
+                updateWebViewResult(testResult);
             } catch (SmplException e){
-                updateWebViewResult(e.getMessage());
+                updateWebViewResult("E");
             }
 
-//        Toast.makeText(getApplicationContext(), testResult, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), testResult, Toast.LENGTH_SHORT).show();
 
         updateParserString("");
         updateCurrentText("");
