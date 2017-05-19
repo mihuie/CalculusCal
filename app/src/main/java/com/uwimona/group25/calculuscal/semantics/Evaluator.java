@@ -1488,7 +1488,8 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
             result = plot.visit(this, newEnv);
             display.add(SmplValue.makePair(vals[0], result));
         }
-        System.out.println(display.toString());
+        //System.out.println(display.toString());
+        result = SmplValue.makeStr(display.toString());
         return result;
     }
 

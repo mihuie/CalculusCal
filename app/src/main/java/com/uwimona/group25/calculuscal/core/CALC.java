@@ -69,8 +69,8 @@ public final class CALC {
 			CalcSymbol.OPERATOR | CalcSymbol.FAST_EVAL);
 	public static final CalcSymbol SUB = new CalcSymbol("SUB", new CalcSUB(),
 			CalcSymbol.FAST_EVAL);
-//	public static final CalcSymbol TAYLOR = new CalcSymbol("TAYLOR", new CalcTAYLOR(),
-//			CalcSymbol.NO_PROPERTY);
+	public static final CalcSymbol TAYLOR = new CalcSymbol("TAYLOR", new CalcTAYLOR(),
+			CalcSymbol.NO_PROPERTY);
 	public static final CalcSymbol GAMMA = new CalcSymbol("GAMMA", new CalcGAMMA(), 
 			CalcSymbol.NO_PROPERTY);
 	public static final CalcSymbol DET = new CalcSymbol("DET", new CalcDET(), 
@@ -267,7 +267,7 @@ public final class CALC {
 		else if (identifier.equals("DEFINE")) return (CalcSymbol)DEFINE.clone();
 		//else if (identifier.equals("PLOT")) return (CalcSymbol)PLOT.clone();  
 		//else if (identifier.equals("PLOT3D")) return (CalcSymbol)PLOT3D.clone();
-		//else if (identifier.equals("TAYLOR")) return (CalcSymbol)TAYLOR.clone();
+		else if (identifier.equals("TAYLOR")) return (CalcSymbol)TAYLOR.clone();
 		else if (identifier.equals("GAMMA")) return (CalcSymbol)GAMMA.clone();
 		else if (identifier.equals("DET")) return (CalcSymbol)DET.clone();
 		else if (identifier.equals("PI")) return PI;

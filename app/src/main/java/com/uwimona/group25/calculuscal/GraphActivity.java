@@ -3,6 +3,7 @@ package com.uwimona.group25.calculuscal;
 import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import com.github.mikephil.charting.charts.LineChart;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
@@ -11,6 +12,7 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 
 
@@ -18,6 +20,11 @@ public class GraphActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        Bundle bundle = getIntent().getExtras();
+        String plotPointsString = bundle.getString("message");
+//        String plotPointsString = "[(3 . 363), (4 . 752), (5 . 1325)]";
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_graph);
 
@@ -28,24 +35,48 @@ public class GraphActivity extends AppCompatActivity {
         ArrayList<Float> xValues = new ArrayList<>();
         ArrayList<Float> yValues = new ArrayList<>();
 
-//        yValues.add(4);
-//        yValues.add(12);
-//        xValues.add(0);
-//        xValues.add(6);
 
-//        for(int i=0; i < 2; i++){
+        plotPointsString = plotPointsString.replace("[", "");
+        plotPointsString = plotPointsString.replace("]", "");
+        plotPointsString = plotPointsString.replace(" ", "");
+        String[] points = plotPointsString.split(",");
+
+//        Log.d("points", Arrays.toString(points));
+
+        for (int i=0; i < points.length; i++){
+            String str;
+            str = points[i].replace("(", "");
+            str = str.replace(")", "");
+//            Log.d("mystring", str);
+
+            str = str.replace(".", ",");
+
+            String[] xy = str.split(",");
+//            Log.d("xy", Arrays.toString(xy));
+
+            float x = Float.parseFloat(xy[0]);
+            float y = Float.parseFloat(xy[1]);
+            xValues.add(x);
+            yValues.add(y);
+        }
+
+
+        for(int i=0; i < xValues.size(); i++){
+            entries.add(new Entry(xValues.get(i), yValues.get(i)));
+        }
+
+//===============
+//        xValues.add(3f);
+//        yValues.add(363f);
+//        xValues.add(4f);
+//        yValues.add(752f);
+//        xValues.add(5f);
+//        yValues.add(1325f);
+//
+//        for(int i=0; i < xValues.size(); i++){
 //            entries.add(new Entry(xValues.get(i), yValues.get(i)));
 //        }
-
-        double x = 0;
-        int numDataPoints = 500;
-        for(int i=0; i <numDataPoints; i++){
-            float function = Float.parseFloat(String.valueOf(Math.cos(x)));
-            xValues.add((float)i);
-            yValues.add(function);
-            x = x + 0.1;
-            entries.add(new Entry(i, function));
-        }
+// =============
 
         float xOffsetMin, xOffsetMax, yOffsetMin, yOffsetMax;
         final float MAX = 4;

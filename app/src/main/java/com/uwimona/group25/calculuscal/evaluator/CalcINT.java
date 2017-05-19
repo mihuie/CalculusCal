@@ -48,7 +48,7 @@ public class CalcINT implements CalcFunctionEvaluator {
 			CalcFunction function = (CalcFunction)obj;
 			CalcObject firstObj = function.get(0);
 			if (firstObj.isNumber()) {
-				return CALC.MULTIPLY.createFunction(function.get(0), 
+				return CALC.MULTIPLY.createFunction(function.get(0),
 						integrate(new CalcFunction(CALC.MULTIPLY, function, 1, function.size()), var));
 			}
 			else { //	INT(f(x)*g(x),x) = ?? (u-sub)

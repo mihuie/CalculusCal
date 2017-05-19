@@ -12,10 +12,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Toast;
+import android.widget.*;
 import com.github.mikephil.charting.charts.LineChart;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
@@ -34,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private String mCurrentText; // stores text format for display
     private String parserString = ""; // stores text format for parser
     private final String SPACE = " ";
+    private String graphMessage = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,15 +79,20 @@ public class MainActivity extends AppCompatActivity {
         final Button buttonXY = (Button) findViewById(R.id.btn_plot);
         buttonXY.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), GraphActivity.class));
+                updateParserString("plot " + parserString);
+                parserEvaluateString();
+
+//                if(graphMessage.contains("[(") && graphMessage.contains(")]")){
+//                    Intent intent = new Intent(getApplicationContext(), GraphActivity.class);
+//                    intent.putExtra("message", graphMessage);
+//                    startActivity(intent);
+//                }
+
+                Intent intent = new Intent(getApplicationContext(), GraphActivity.class);
+                intent.putExtra("message", graphMessage);
+                startActivity(intent);
             }
         });
-
-//        final Button buttonF = (Button) findViewById(R.id.btn_f);
-//        buttonF.setOnLongClickListener(buttonLongClickHandler);
-//
-//        final Button buttonG = (Button) findViewById(R.id.btn_g);
-//        buttonG.setOnLongClickListener(buttonLongClickHandler);
 
         updateCurrentText(getString(R.string.text_0));
         updateWebView(getCurrentText());
@@ -153,28 +156,32 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateWebViewResult(String text){
-//        Log.v("result", text);
-        WebView webView = (WebView)findViewById(R.id.webViewResult);
-        WebSettings webSettings = webView.getSettings();
-        webSettings.setJavaScriptEnabled(true);
-        final String path="file:///android_asset/";
-        String js = "<html><head>"
-                + "<link rel='stylesheet' href='"+path+"jqmath-0.4.3.css'>"
-                + "<style type='text/css'> html {font-size: 120%;} </style>"
-                + "<script src='" +path+"jquery-1.4.3.min.js'></script>"
-                + "<script src='"+path+"jqmath-etc-0.4.6.min.js'></script>"
-                + "</head><body>"
-                + "<script>var s = '$$" + text + "$$';M.parseMath(s);document.write(s);</script></body>";
-        webView.loadDataWithBaseURL(path, js,  "text/html",  "UTF-8", null);
 
-        // disabling longClick
-        webView.setLongClickable(true);
-        webView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                return true;
-            }
-        });
+        TextView webViewResult = (TextView) findViewById(R.id.webViewResult);
+        webViewResult.setText(text);
+//        Log.d("result", text);
+//        WebView webView = (WebView)findViewById(R.id.webViewResult);
+//        WebSettings webSettings = webView.getSettings();
+//        webSettings.setJavaScriptEnabled(true);
+//        final String path="file:///android_asset/";
+//        String js = "<html><head>"
+//                + "<link rel='stylesheet' href='"+path+"jqmath-0.4.3.css'>"
+//                + "<style type='text/css'> html {font-size: 120%;} </style>"
+//                + "<script src='" +path+"jquery-1.4.3.min.js'></script>"
+//                + "<script src='"+path+"jqmath-etc-0.4.6.min.js' charset='utf-8'></script>"
+//                + "</head><body>"
+//                + "<script>var s = '$$" + text + "$$';M.parseMath(s);document.write(s);</script></body>";
+//        webView.loadDataWithBaseURL(path, js,  "text/html",  "UTF-8", null);
+//
+//        // disabling longClick
+//        webView.setLongClickable(true);
+//        webView.setOnLongClickListener(new View.OnLongClickListener() {
+//            @Override
+//            public boolean onLongClick(View v) {
+//                return true;
+//            }
+//        });
+
     }
 
     private void updateCurrentText(String str){
@@ -332,7 +339,23 @@ public class MainActivity extends AppCompatActivity {
         String input = getParserString();
         String parserStringCondition;
 
-        if (getParserString().startsWith("diff(") || getParserString().startsWith("INT(")) {
+        Log.d("inputw", input);
+
+        if (getParserString().startsWith("plot ")){
+           // input = input.substring(0, input.indexOf("->"));
+//            Log.d("inputx", input);
+            parserStringCondition = input.substring(input.indexOf("->"));
+            Log.d("inputy", parserStringCondition);
+            parserStringCondition = parserStringCondition.replace("(", "[");
+            parserStringCondition = parserStringCondition.replace(")", "]");
+            parserStringCondition = parserStringCondition.replace("->", "for x in ");
+
+            input = input.substring(0, input.indexOf("->"));
+
+            input =  input + parserStringCondition + ";";
+            Log.d("input", input);
+
+        } else if (getParserString().startsWith("diff(") || getParserString().startsWith("INT(")) {
             input =  input + " : x);";
         } else if (getParserString().startsWith("TAN(") || getParserString().startsWith("COS(") ||
                 getParserString().startsWith("SIN(") || getParserString().startsWith("LN(")){
@@ -373,23 +396,25 @@ public class MainActivity extends AppCompatActivity {
             updateWebViewResult("E" + e.getMessage());
         }
 
-        String testResult = "";
+        String parserResult = "";
         if(program != null)
             try {
                 Object result = program.visit(interp, new Environment());
 //                Log.v("result", result.toString());
                 if (result.toString().contains(" * x")){
-                    testResult = result.toString().replace(" * x", "x");
+                    parserResult = result.toString().replace(" * x", "x");
                 } else {
-                    testResult = result.toString();
+                    parserResult = result.toString();
                 }
 
-                updateWebViewResult(testResult);
+                updateWebViewResult(parserResult);
+                graphMessage = parserResult;
             } catch (SmplException e){
                 updateWebViewResult("E");
+                graphMessage = parserResult;
             }
 
-        Toast.makeText(getApplicationContext(), testResult, Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getApplicationContext(), parserResult, Toast.LENGTH_SHORT).show();
 
         updateParserString("");
         updateCurrentText("");
@@ -492,10 +517,10 @@ public class MainActivity extends AppCompatActivity {
                     addOperation(Utils.EXPONENT, "");
                     break;
                 case R.id.btn_leftBracket:
-                    addOperation(Utils.LEFTBRACKET, ")");
+                    addOperation(Utils.LEFTBRACKET, "(");
                     break;
                 case R.id.btn_rightBracket:
-                    addOperation(Utils.RIGHTBRACKET, "(");
+                    addOperation(Utils.RIGHTBRACKET, ")");
                     break;
                 case R.id.btn_power:
                     addOperation(Utils.POWER, SPACE+"^"+SPACE+"");
@@ -516,7 +541,7 @@ public class MainActivity extends AppCompatActivity {
                     addOperation(Utils.VARIABLEX, "x");
                     break;
                 case R.id.btn_y:
-                    addOperation(Utils.VARIABLEY, "y");
+                    addOperation(Utils.VARIABLEY, SPACE+":"+SPACE+"");
                     break;
                 case R.id.btn_factorial:
                     addOperation(Utils.FACTORIAL, "!");

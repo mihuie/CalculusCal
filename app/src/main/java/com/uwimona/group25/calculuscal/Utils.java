@@ -22,19 +22,19 @@ public final class Utils {
     final static String LN = "`ln";
     final static String LOG = "`log";
     final static String DECIMAL = ".";
-    final static String EXPONENT = "e";
+    final static String EXPONENT = "\u2202x";
     final static String FUNCTIONF = "f";
     final static String FACTORIAL = "!";
     final static String FUNCTIONG = "g";
     final static String VARIABLEX = "x";
-    final static String VARIABLEY = "y";
+    final static String VARIABLEY = ":";
     final static String LEFTBRACKET = "(";
     final static String RIGHTBRACKET = ")";
     final static String INTEGRAL = "\u222B ";
     final static String PI = "\u03C0 ";
     final static String ROOT = "\u221A{";
     final static String INFINITY = "\u221E";
-    final static String DIFF = "\u2202x/\u2202y ";
+    final static String DIFF = "\u2202y/\u2202x ";
     final static String LIMIT = "`lim\u2199{";
     final static String TOWARDS = "\u2192";
 

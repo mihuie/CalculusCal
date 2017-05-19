@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CalculusCal</string>
+    <string name="app_name">Java Calculus</string>
     <string name="action_about">About</string>
     <string name="action_help">Help</string>
     <string name="action_script">Script Mode</string>
@@ -44,7 +44,7 @@
     <string name="btn_f">f</string>
     <string name="btn_g">g</string>
     <string name="btn_x">x</string>
-    <string name="btn_y">y</string>
+    <string name="btn_y">:</string>
     <string name="btn_pi">&#960;</string>
     <string name="btn_storeFunction">Func</string>
     <string name="btn_log">log</string>
@@ -53,12 +53,12 @@
     <string name="btn_tan">tan</string>
     <string name="btn_ln">ln</string>
     <string name="btn_limit">lim</string>
-    <string name="btn_diff">&#8706;</string>
+    <string name="btn_diff">&#8706;y/&#8706;x</string>
     <string name="btn_integral">&#8747;</string>
     <string name="btn_towards">&#8594;</string>
     <string name="btn_plusmn">&#177;</string>
     <string name="btn_infinity">&#8734;</string>
-    <string name="btn_exponent">e</string>
+    <string name="btn_exponent">&#8706;x</string>
     <string name="btn_space">SP</string>
     <string name="btn_evaluate">GO</string>
     <string name="action_graph">Graph</string>
