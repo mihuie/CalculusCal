@@ -84,6 +84,14 @@
             android:background="#8b8f96">
 
         <Button
+                android:id="@+id/btn_limit"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/btn_limit"
+                style="@style/MyButton"/>
+
+        <Button
                 android:id="@+id/btn_integral"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -100,20 +108,14 @@
                 style="@style/MyButton"/>
 
         <Button
-                android:id="@+id/btn_limit"
+                android:id="@+id/btn_infinity"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/btn_limit"
-                style="@style/MyButton"/>
-
-        <Button
-                android:id="@+id/btn_towards"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/btn_towards"
-                style="@style/MyButton"/>
+                android:text="@string/btn_infinity"
+                android:textStyle="italic"
+                android:textAllCaps="false"
+                style="@style/MyButtonNum"/>
 
         <Button
                 android:id="@+id/btn_exponent"
@@ -122,6 +124,7 @@
                 android:layout_weight="1"
                 android:text="@string/btn_exponent"
                 style="@style/MyButton"/>
+
 
     </LinearLayout>
 
@@ -142,6 +145,14 @@
                 style="@style/MyButton"/>
 
         <Button
+                android:id="@+id/btn_factorial"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="@string/btn_fact"
+                style="@style/MyButton"/>
+
+        <Button
                 android:id="@+id/btn_f"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -149,13 +160,13 @@
                 android:text="@string/btn_f"
                 style="@style/MyButton"/>
 
-        <Button
-                android:id="@+id/btn_g"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:text="@string/btn_g"
-                style="@style/MyButton"/>
+        <!--<Button-->
+                <!--android:id="@+id/btn_g"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--android:text="@string/btn_g"-->
+                <!--style="@style/MyButton"/>-->
 
         <Button
                 android:id="@+id/btn_x"
@@ -184,13 +195,12 @@
             android:background="#8b8f96">
 
         <Button
-                android:id="@+id/btn_infinity"
+                android:id="@+id/btn_towards"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/btn_infinity"
-                android:textAllCaps="false"
-                style="@style/MyButtonNum"/>
+                android:text="@string/btn_towards"
+                style="@style/MyButton"/>
 
         <Button
                 android:id="@+id/btn_leftBracket"
@@ -419,8 +429,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/btn_evaluate"
-                style="@style/MyButtonSpecial"/>
+                android:drawableLeft="@android:drawable/ic_menu_send"/>
 
     </LinearLayout>
 

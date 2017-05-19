@@ -2,24 +2,37 @@ package com.uwimona.group25.calculuscal;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 import com.github.mikephil.charting.charts.LineChart;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import com.uwimona.group25.calculuscal.semantics.Environment;
+import com.uwimona.group25.calculuscal.semantics.Evaluator;
+import com.uwimona.group25.calculuscal.syntax.SmplLexer;
+import com.uwimona.group25.calculuscal.syntax.SmplParser;
+import com.uwimona.group25.calculuscal.syntax.SmplProgram;
+import com.uwimona.group25.calculuscal.sys.SmplException;
 
 public class MainActivity extends AppCompatActivity {
     private String mCurrentText; // stores text format for display
-//    private String mResultText; // store text return from parser
-//    private String mFunctionF = ""; // holds function assigned to g
-//    private String mFunctionG = ""; // holds function assigned to g
+    private String parserString = ""; // stores text format for parser
+    private final String SPACE = " ";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,6 +40,13 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.button_go);
+        fab.setVisibility(View.GONE);
+
+        EditText script_input = (EditText) findViewById(R.id.script_input);
+        script_input.setVisibility(View.GONE);
+
 
         final LineChart lineChart = (LineChart)findViewById(R.id.chart);
         lineChart.setNoDataText("");
@@ -139,10 +159,10 @@ public class MainActivity extends AppCompatActivity {
         String js = "<html><head>"
                 + "<link rel='stylesheet' href='"+path+"jqmath-0.4.3.css'>"
                 + "<style type='text/css'> html {font-size: 120%;} </style>"
-                + "<script src='"+path+"jquery-1.4.3.min.js'></script>"
+                + "<script src='" +path+"jquery-1.4.3.min.js'></script>"
                 + "<script src='"+path+"jqmath-etc-0.4.6.min.js'></script>"
                 + "</head><body>"
-                + "<script>var s = '$$"+text+"$$';M.parseMath(s);document.write(s);</script></body>";
+                + "<script>var s = '$$" + text + "$$';M.parseMath(s);document.write(s);</script></body>";
         webView.loadDataWithBaseURL(path, js,  "text/html",  "UTF-8", null);
 
         // disabling longClick
@@ -163,17 +183,79 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void updateParserString(String str){
+           parserString = str;
+    }
+
     private String getCurrentText(){
         return mCurrentText;
     }
 
-    private void evaluateInput(){
-        updateWebViewResult(getCurrentText());
-        updateWebView(getString(R.string.text_0));
+    private String getParserString(){
+        return parserString;
     }
 
-    private void addOperation(String str) {
+    private void clearAll(){
+        updateWebView(getString(R.string.text_0));
+        updateWebViewResult("");
+        updateCurrentText(getString(R.string.text_0));
+        updateParserString("");
+    }
+
+    private void backspace() {
+//        String str = getCurrentText();
+//
+//        if (str != null && str.length() > 0) {
+//            for(String operand : Utils.getOperands()){
+//                if(str.endsWith(operand)) {
+//                    str = str.substring(0, str.length() - operand.length());
+//                    updateCurrentText(str);
+//                    updateWebView(getCurrentText());
+//                    return;
+//                }
+//            }
+//            str = str.substring(0, str.length()-1);
+//            updateCurrentText(str);
+//            updateWebView(getCurrentText());
+//        }
+        clearAll();
+    }
+
+    private void handleSPKey(){
+        int state = 0;
+
+        if ((getCurrentText().endsWith(getString(R.string.text_0)) && (getCurrentText().length() == 1)) ||
+                getCurrentText().endsWith(Utils.ROOT)) {
+            state = 1;
+        } else if (getCurrentText().startsWith(Utils.LIMIT) &&
+                !(getCurrentText().contains("}"))){
+            addOperation("}", "]");
+            state = 1;
+        } else {
+            for (int i = getCurrentText().length() - 1; i >= 0; --i) { //&& !getCurrentText().endsWith("}")
+                if ((getCurrentText().charAt(i) == '{') ) {
+                    addOperation("}", "]");
+                    state = 1;
+                    break;
+                } else if (getCurrentText().charAt(i) == '/') {
+                    addOperation(Utils.SPACE, SPACE);
+                    state = 1;
+                    break;
+                } else if (getCurrentText().charAt(i) == '^') {
+                    addOperation(Utils.SPACE, SPACE);
+                    state = 1;
+                    break;
+                }
+            }
+        }
+
+        if ((state == 0) && (!getCurrentText().endsWith(Utils.SPACE))) addOperation(Utils.SPACE, SPACE);
+    }
+
+    private void addOperation(String str, String strP) {
         String text = " ";
+        String parserText;
+
         if ("0".equals(getCurrentText())) {
             switch (str) {
                 case " ":
@@ -196,7 +278,7 @@ public class MainActivity extends AppCompatActivity {
             }
         } else if (getCurrentText().contains(Utils.EQUAL) && (str.equals(Utils.EQUAL))) {
             text = getCurrentText();
-        } else if (getCurrentText().endsWith(Utils.LIMIT) && (Utils.getOperands().contains(str))) {
+        } else if (getCurrentText().endsWith(Utils.LIMIT) && ((Utils.getOperands().contains(str)))) {
             text = getCurrentText();
         } else if (getCurrentText().endsWith(Utils.DECIMAL) && (Utils.getBasicOperators().contains(str))) {
             text = str.equals(Utils.EQUAL) ? getCurrentText() + "0" + str : getCurrentText();
@@ -233,60 +315,77 @@ public class MainActivity extends AppCompatActivity {
             text = getCurrentText() + str;
         }
 
-        // s
+        if (strP.equals("x") && Character.isDigit(getParserString().charAt(getParserString().length()-1)))
+            strP = SPACE + "*" + SPACE + "x";
+
+        parserText = ((text.length() >= getCurrentText().length()) || !getCurrentText().equals("0")) ? getParserString() + strP : getParserString();
+
         updateWebView(text);
         updateCurrentText(text);
+        updateParserString(parserText);
     }
 
-    private void clearAll(){
-        updateWebView(getString(R.string.text_0));
-        updateWebViewResult("");
-        updateCurrentText(getString(R.string.text_0));
-    }
+    private void parserEvaluateString(){
 
-    private void backspace() {
-        String str = getCurrentText();
+        String input = getParserString();
+        String parserStringCondition;
 
-        if (str != null && str.length() > 0) {
-            for(String operand : Utils.getOperands()){
-                if(str.endsWith(operand)) {
-                    str = str.substring(0, str.length() - operand.length());
-                    updateCurrentText(str);
-                    updateWebView(getCurrentText());
-                    return;
-                }
+        if (getParserString().startsWith("diff(") || getParserString().startsWith("INT(")) {
+            input =  input + " : x);";
+        } else if (getParserString().startsWith("TAN(") || getParserString().startsWith("COS(") ||
+                getParserString().startsWith("SIN(") || getParserString().startsWith("LN(")){
+            input =  input + " );";
+        } else if (getParserString().startsWith("limit([")) {
+            String str = getParserString();
+            try {
+                parserStringCondition = str.substring(str.indexOf("[") + 1, str.indexOf("]"));
+                input = "limit("+str.substring(str.indexOf("]") + 1, str.length())+SPACE
+                        +"as"+SPACE+parserStringCondition+");";
+            } catch (Exception e) {
+                updateWebViewResult(e.getMessage());
             }
-            str = str.substring(0, str.length()-1);
-            updateCurrentText(str);
-            updateWebView(getCurrentText());
-        }
-    }
-
-    private void handleSPKey(){
-        int state = 0;
-
-        if (getCurrentText().endsWith(getString(R.string.text_0)) ||
-                getCurrentText().endsWith(Utils.ROOT)) {
-            state =1;
+        } else if (getParserString().startsWith("sqRoot(")) {
+            String str = getParserString();
+            try {
+                input = str.substring(str.indexOf("("), str.length()) + ") ^ (1/2);";
+            } catch (Exception e) {
+                updateWebViewResult(e.getMessage());
+            }
         } else {
-            for (int i = getCurrentText().length() - 1; i >= 0; --i) {
-                if ((getCurrentText().charAt(i) == '{') && !getCurrentText().endsWith("}")) {
-                    addOperation("}");
-                    state = 1;
-                    break;
-                } else if (getCurrentText().charAt(i) == '/') {
-                    addOperation(Utils.SPACE);
-                    state = 1;
-                    break;
-                } else if (getCurrentText().charAt(i) == '^') {
-                    addOperation(Utils.SPACE);
-                    state = 1;
-                    break;
-                }
-            }
+            input = input + ";";
         }
 
-        if ((state == 0) && (!getCurrentText().endsWith(Utils.SPACE))) addOperation(Utils.SPACE);
+        ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(Charset.defaultCharset()));
+        InputStreamReader reader = new InputStreamReader(bais);
+
+        SmplParser parser;
+        SmplProgram program = null;
+        Evaluator interp = new Evaluator();
+
+//        updateWebView(input);
+
+        try {
+            parser = new SmplParser(new SmplLexer(reader));
+            program = (SmplProgram) parser.parse().value;
+        } catch (Exception e) {
+            updateWebViewResult("Parse Error: " + e.getMessage());
+        }
+
+        String testResult = "";
+        if(program != null)
+            try {
+                Object result = program.visit(interp, new Environment());
+                testResult = result.toString();
+                updateWebViewResult(result.toString());
+            } catch (SmplException e){
+                updateWebViewResult(e.getMessage());
+            }
+
+//        Toast.makeText(getApplicationContext(), testResult, Toast.LENGTH_SHORT).show();
+
+        updateParserString("");
+        updateCurrentText("");
+
     }
 
     private class ButtonLongClickHandler implements View.OnLongClickListener {
@@ -299,9 +398,6 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case R.id.btn_f:
 //                    calFunctions("mFunctionF");
-                    break;
-                case R.id.btn_g:
-//                    calFunctions("mFunctionG");
                     break;
                 default:
                     break;
@@ -316,115 +412,115 @@ public class MainActivity extends AppCompatActivity {
             int id = v.getId();
             switch (id) {
                 case R.id.btn_0:
-                    addOperation("0");
+                    addOperation("0", "0");
                     break;
                 case R.id.btn_1:
-                    addOperation("1");
+                    addOperation("1", "1");
                     break;
                 case R.id.btn_2:
-                    addOperation("2");
+                    addOperation("2", "2");
                     break;
                 case R.id.btn_3:
-                    addOperation("3");
+                    addOperation("3", "3");
                     break;
                 case R.id.btn_4:
-                    addOperation("4");
+                    addOperation("4", "4");
                     break;
                 case R.id.btn_5:
-                    addOperation("5");
+                    addOperation("5", "5");
                     break;
                 case R.id.btn_6:
-                    addOperation("6");
+                    addOperation("6", "6");
                     break;
                 case R.id.btn_7:
-                    addOperation("7");
+                    addOperation("7", "7");
                     break;
                 case R.id.btn_8:
-                    addOperation("8");
+                    addOperation("8", "8");
                     break;
                 case R.id.btn_9:
-                    addOperation("9");
-                    break;
-                case R.id.btn_limit:
-                    addOperation(Utils.LIMIT);
-                    break;
-                case R.id.btn_cos:
-                    addOperation(Utils.COS);
-                    break;
-                case R.id.btn_sin:
-                    addOperation(Utils.SIN);
-                    break;
-                case R.id.btn_tan:
-                    addOperation(Utils.TAN);
-                    break;
-                case R.id.btn_decimal:
-                    addOperation(Utils.DECIMAL);
-                    break;
-                case R.id.btn_divide:
-                    addOperation(Utils.DIVIDE);
-                    break;
-                case R.id.btn_exponent:
-                    addOperation(Utils.EXPONENT);
-                    break;
-                case R.id.btn_leftBracket:
-                    addOperation(Utils.LEFTBRACKET);
-                    break;
-                case R.id.btn_rightBracket:
-                    addOperation(Utils.RIGHTBRACKET);
-                    break;
-                case R.id.btn_ln:
-                    addOperation(Utils.LN);
-                    break;
-                case R.id.btn_integral:
-                    addOperation(Utils.INTEGRAL);
-                    break;
-                case R.id.btn_log:
-                    addOperation(Utils.LOG);
+                    addOperation("9", "9");
                     break;
                 case R.id.btn_minus:
-                    addOperation(Utils.MINUS);
+                    addOperation(Utils.MINUS, SPACE+"-"+SPACE+"");
                     break;
                 case R.id.btn_plus:
-                    addOperation(Utils.ADD);
+                    addOperation(Utils.ADD, SPACE+"+"+SPACE+"");
                     break;
                 case R.id.btn_multiply:
-                    addOperation(Utils.MULTIPLY);
+                    addOperation(Utils.MULTIPLY, SPACE+"*"+SPACE+"");
+                    break;
+                case R.id.btn_divide:
+                    addOperation(Utils.DIVIDE, SPACE+"/"+SPACE+"");
+                    break;
+                case R.id.btn_limit:
+                    addOperation(Utils.LIMIT, "limit([");
+                    break;
+                case R.id.btn_cos:
+                    addOperation(Utils.COS, "COS(");
+                    break;
+                case R.id.btn_sin:
+                    addOperation(Utils.SIN, "SIN(");
+                    break;
+                case R.id.btn_tan:
+                    addOperation(Utils.TAN, "TAN(");
+                    break;
+                case R.id.btn_ln:
+                    addOperation(Utils.LN, "LN(");
+                    break;
+                case R.id.btn_integral:
+                    addOperation(Utils.INTEGRAL, "INT(");
+                    break;
+                case R.id.btn_log:
+                    addOperation(Utils.LOG, "LOG(");
                     break;
                 case R.id.btn_pi:
-                    addOperation(Utils.PI);
+                    addOperation(Utils.PI, "PI");
+                    break;
+                case R.id.btn_decimal:
+                    addOperation(Utils.DECIMAL, ".");
+                    break;
+                case R.id.btn_exponent:
+                    addOperation(Utils.EXPONENT, "");
+                    break;
+                case R.id.btn_leftBracket:
+                    addOperation(Utils.LEFTBRACKET, ")");
+                    break;
+                case R.id.btn_rightBracket:
+                    addOperation(Utils.RIGHTBRACKET, "(");
                     break;
                 case R.id.btn_power:
-                    addOperation(Utils.POWER);
+                    addOperation(Utils.POWER, SPACE+"^"+SPACE+"");
                     break;
                 case R.id.btn_root:
-                    addOperation(Utils.ROOT);
+                    addOperation(Utils.ROOT, "sqRoot(");
                     break;
                 case R.id.btn_towards:
-                    addOperation(Utils.TOWARDS);
+                    addOperation(Utils.TOWARDS, SPACE+"->"+SPACE+"");
                     break;
                 case R.id.btn_equals:
-                    addOperation(Utils.EQUAL);
+                    addOperation(Utils.EQUAL, "=");
                     break;
                 case R.id.btn_f:
-                    addOperation(Utils.FUNCTIONF);
+                    addOperation(Utils.FUNCTIONF, "x");
                     break;
                 case R.id.btn_x:
-                    addOperation(Utils.VARIABLEX);
+                    addOperation(Utils.VARIABLEX, "x");
                     break;
                 case R.id.btn_y:
-                    addOperation(Utils.VARIABLEY);
+                    addOperation(Utils.VARIABLEY, "y");
                     break;
-                case R.id.btn_g:
-                    addOperation(Utils.FUNCTIONG);
+                case R.id.btn_factorial:
+                    addOperation(Utils.FACTORIAL, "!");
                     break;
                 case R.id.btn_diff:
-                    addOperation(Utils.DIFF);
+                    addOperation(Utils.DIFF, "diff(");
                     break;
                 case R.id.btn_infinity:
-                    addOperation(Utils.INFINITY);
+                    addOperation(Utils.INFINITY, "infinity");
                     break;
                 case R.id.btn_evaluate:
-                    evaluateInput();
+                    parserEvaluateString();
                     break;
                 case R.id.btn_space:
                     handleSPKey();

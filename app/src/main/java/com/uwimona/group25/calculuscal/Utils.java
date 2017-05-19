@@ -20,10 +20,11 @@ public final class Utils {
     final static String SIN = "`sin ";
     final static String TAN = "`tan ";
     final static String LN = "`ln";
-    final static String LOG = "`log_";
+    final static String LOG = "`log";
     final static String DECIMAL = ".";
     final static String EXPONENT = "e";
     final static String FUNCTIONF = "f";
+    final static String FACTORIAL = "!";
     final static String FUNCTIONG = "g";
     final static String VARIABLEX = "x";
     final static String VARIABLEY = "y";
@@ -33,7 +34,7 @@ public final class Utils {
     final static String PI = "\u03C0 ";
     final static String ROOT = "\u221A{";
     final static String INFINITY = "\u221E";
-    final static String DIFF = "\u2202";
+    final static String DIFF = "\u2202x/\u2202y ";
     final static String LIMIT = "`lim\u2199{";
     final static String TOWARDS = "\u2192";
 
@@ -41,7 +42,7 @@ public final class Utils {
     final static ArrayList<String> advanceOperands = new ArrayList<>(Arrays.asList(LN, COS, SIN, TAN, LOG));
     final static ArrayList<String> noDuplicates = new ArrayList<>(Arrays.asList(LN, COS, SIN, TAN, LOG, DIVIDE,
             MULTIPLY, MINUS, ADD, POWER, EQUAL, DECIMAL, FUNCTIONF, FUNCTIONG, ROOT, INTEGRAL, INFINITY, TOWARDS,
-            EXPONENT, VARIABLEX, VARIABLEY, PI));
+            EXPONENT, VARIABLEX, VARIABLEY, PI, FACTORIAL));
 
 
     private Utils(){
@@ -70,14 +71,15 @@ public final class Utils {
         constants.add(LIMIT);
         constants.add(PI);
         constants.add(DIFF);
-        constants.add(VARIABLEX);
-        constants.add(VARIABLEY);
+//        constants.add(VARIABLEX);
+//        constants.add(VARIABLEY);
         constants.add(FUNCTIONF);
         constants.add(FUNCTIONG);
         constants.add(EXPONENT);
         constants.add(DECIMAL);
         constants.add(LEFTBRACKET);
         constants.add(RIGHTBRACKET);
+        constants.add(FACTORIAL);
 
         return constants;
     }

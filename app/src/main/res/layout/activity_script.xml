@@ -17,7 +17,7 @@
             android:layout_alignParentEnd="true"
             app:srcCompat="@android:drawable/ic_menu_send"
             android:onClick="parseEvalShow"
-            android:layout_margin="4dp" />
+            android:layout_margin="4dp"/>
 
     <EditText
             android:id="@+id/script_input"

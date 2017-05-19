@@ -5,6 +5,7 @@ package com.uwimona.group25.calculuscal;
  */
 
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -30,23 +31,30 @@ public class ScriptActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_script);
 
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.button_go);
+        fab.setVisibility(View.VISIBLE);
+
         setupViews();
     }
 
     private void setupViews(){
         script_input = (EditText) findViewById(R.id.script_input);
         script_result = (TextView) findViewById(R.id.script_result);
+
+        script_input.setVisibility(View.VISIBLE);
     }
 
     public void parseEvalShow(View v){
 
         String input = script_input.getText().toString();
+
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(Charset.defaultCharset()));
         InputStreamReader reader = new InputStreamReader(bais);
 
         SmplParser parser;
         SmplProgram program = null;
         Evaluator interp = new Evaluator();
+
 
         try {
             parser = new SmplParser(new SmplLexer(reader));
