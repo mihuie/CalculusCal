@@ -58,8 +58,8 @@ public class SmplQuadratic extends SmplValue<SmplQuadratic>  {
 
 			InputStream is =  new ByteArrayInputStream(expression.getBytes());
 			BufferedReader in = new BufferedReader(new InputStreamReader(is));
-			StringTokenizer st = st = new StringTokenizer(in.readLine());;
-			boolean firstToken = true;
+			StringTokenizer st = st = new StringTokenizer(in.readLine());
+            boolean firstToken = true;
 
 		
 			 
@@ -81,19 +81,13 @@ public class SmplQuadratic extends SmplValue<SmplQuadratic>  {
 			
 			if(firstToken)
 			{
-				if(input.charAt(0) == '-')
-				{
-					isPositive = false;
-				}else { isPositive = true; }
+                isPositive = input.charAt(0) != '-';
 				
 			
 			}
 			else 
 			{
-				if(input.charAt(0) == '+')
-					isPositive = true;
-				else 
-					isPositive = false;
+                isPositive = input.charAt(0) == '+';
 			}
 
 			for(int i = ((isPositive && firstToken) ? (0) : (1)); i < input.length(); i++ )

@@ -10,11 +10,11 @@ public interface CalcOperatorEvaluator extends CalcFunctionEvaluator {
 	 * @param function input function
 	 * @return operator notation String
 	 */
-	public String toOperatorString(CalcFunction function);
+    String toOperatorString(CalcFunction function);
 	
 	/**
 	 * 
 	 * @return the precedence of the operator
 	 */
-	public int getPrecedence();
+    int getPrecedence();
 }

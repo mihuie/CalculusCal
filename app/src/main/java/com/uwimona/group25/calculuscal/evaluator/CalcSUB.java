@@ -115,7 +115,7 @@ public class CalcSUB implements CalcFunctionEvaluator {
 				result.add(number);
 			}
 			else if (obj instanceof CalcFunction) {
-				result.add(numericSubstitute((CalcFunction)obj, variable, number));
+				result.add(numericSubstitute(obj, variable, number));
 			}
 			else result.add(obj);
 		}

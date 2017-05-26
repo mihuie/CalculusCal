@@ -31,7 +31,7 @@ public class CalcINT implements CalcFunctionEvaluator {
 		if (obj instanceof CalcFunction) { //input f(x..xn)
 			obj = CALC.SYM_EVAL(obj); //evaluate the function before attempting integration
 		}
-		if (obj.isNumber() || (obj instanceof CalcSymbol && !((CalcSymbol)obj).equals(var))) {	//	INT(c,x) = c*x
+		if (obj.isNumber() || (obj instanceof CalcSymbol && !obj.equals(var))) {	//	INT(c,x) = c*x
 			return CALC.MULTIPLY.createFunction(obj, var); 
 		}
 		if (obj.equals(var)) { //	INT(x, x) = x^2/2

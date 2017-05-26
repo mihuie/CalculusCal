@@ -15,10 +15,7 @@ public class ExpIf extends Exp {
     this.ifArg = ifArg;
     this.elseArg = elseArg;
 
-    if(elseArg != null)
-    {
-      this.els= true;
-    }else{ this.els = false; }
+      this.els = elseArg != null;
     
   }
 

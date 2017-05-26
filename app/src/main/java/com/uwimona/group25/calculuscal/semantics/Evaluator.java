@@ -740,7 +740,7 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
             while (l2.getFirstValue() != null )
             {
-                vals.add((SmplValue) l2.getFirstValue());
+                vals.add(l2.getFirstValue());
 
 
                 l2 = (SmplList) l2.getSecondValue();
@@ -748,7 +748,7 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
             }
             while (l1.getFirstValue() != null )
             {
-                vals.add((SmplValue) l1.getFirstValue());
+                vals.add(l1.getFirstValue());
 
 
                 l1 = (SmplList) l1.getSecondValue();
@@ -771,7 +771,7 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
             Collections.reverse(vals);
             while (l2.getFirstValue() != null )
             {
-                vals.add(0,(SmplValue) l2.getFirstValue());
+                vals.add(0, l2.getFirstValue());
 
 
                 l2 = (SmplList) l2.getSecondValue();
@@ -790,7 +790,7 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
 
             while (l1.getFirstValue() != null )
             {
-                vals.add((SmplValue) l1.getFirstValue());
+                vals.add(l1.getFirstValue());
 
 
                 l1 = (SmplList) l1.getSecondValue();
@@ -1821,8 +1821,8 @@ public class Evaluator implements Visitor<Environment<SmplValue<?>>, SmplValue<?
         SmplValue<?>[] vals = {exp.getPoint().visit(this, env)};
         String vars[] = {exp.getVar()};
         Double lVal = Double.POSITIVE_INFINITY;
-        Double rVal = Double.POSITIVE_INFINITY;;
-        Double fVal = Double.POSITIVE_INFINITY;;
+        Double rVal = Double.POSITIVE_INFINITY;
+        Double fVal = Double.POSITIVE_INFINITY;
 
         Environment<SmplValue<?>> newEnv;
 

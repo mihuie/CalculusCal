@@ -1,10 +1,12 @@
 package com.uwimona.group25.calculuscal;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     private final String SPACE = " ";
     private String graphMessage = "";
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,11 +49,14 @@ public class MainActivity extends AppCompatActivity {
         EditText script_input = (EditText) findViewById(R.id.script_input);
         script_input.setVisibility(View.GONE);
 
+//        WebView wv = (WebView) findViewById(R.id.webViewGraph);
+//        wv.setVisibility(View.GONE);
 
-        final LineChart lineChart = (LineChart)findViewById(R.id.chart);
+        final LineChart lineChart = (LineChart) findViewById(R.id.chart);
         lineChart.setNoDataText("");
 
         List<Integer> myList = new ArrayList<>();
+        myList.add(R.id.linLayout_0);
         myList.add(R.id.linLayout_1);
         myList.add(R.id.linLayout_2);
         myList.add(R.id.linLayout_3);
@@ -61,38 +67,66 @@ public class MainActivity extends AppCompatActivity {
         myList.add(R.id.linLayout_8);
 
         ButtonClickHandler buttonClickHandler = new ButtonClickHandler();
-        for(Integer i : myList){
+        for (Integer i : myList) {
             LinearLayout myLinearLayout = (LinearLayout) findViewById(i);
             int count = myLinearLayout.getChildCount();
-            for(int j=0; j < count; j++){
+            for (int j = 0; j < count; j++) {
                 View v = myLinearLayout.getChildAt(j);
-                if (v instanceof Button){
+                if (v instanceof Button) {
                     v.setOnClickListener(buttonClickHandler);
                 }
             }
         }
 
+//        final Button button = (Button) findViewById(R.id.btn_y);
+//        if (Build.VERSION.SDK_INT >= 24) {
+//            button.setText(Html.fromHtml(",<sup><small>:</small></sup", 25));
+//        } else {
+//            button.setText(Html.fromHtml(",<sup><small>:</small></sup"));
+//        }
+
+
         ButtonLongClickHandler buttonLongClickHandler = new ButtonLongClickHandler();
         final Button buttonC = (Button) findViewById(R.id.btn_clear);
-        buttonC.setOnLongClickListener(buttonLongClickHandler);
 
-        final Button buttonXY = (Button) findViewById(R.id.btn_plot);
-        buttonXY.setOnClickListener(new View.OnClickListener() {
+        buttonC.setOnLongClickListener(buttonLongClickHandler);
+//        button.setOnLongClickListener(buttonLongClickHandler);
+
+        final Button buttonPlot = (Button) findViewById(R.id.btn_plot);
+        buttonPlot.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 updateParserString("plot " + parserString);
                 parserEvaluateString();
-
-//                if(graphMessage.contains("[(") && graphMessage.contains(")]")){
-//                    Intent intent = new Intent(getApplicationContext(), GraphActivity.class);
-//                    intent.putExtra("message", graphMessage);
-//                    startActivity(intent);
-//                }
 
                 Intent intent = new Intent(getApplicationContext(), GraphActivity.class);
                 intent.putExtra("message", graphMessage);
                 startActivity(intent);
             }
         });
+
+        final Button buttonRoots = (Button) findViewById(R.id.btn_f_roots);
+        buttonRoots.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                updateParserString("root( " + parserString);
+                parserEvaluateString();
+            }
+        });
+
+        final Button buttonTaylor = (Button) findViewById(R.id.btn_f_taylor);
+        buttonTaylor.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                updateParserString("TAYLOR( " + parserString);
+                parserEvaluateString();
+            }
+        });
+
+//         final Button buttonCont = (Button) findViewById(R.id.btn_f_cont);
+//         buttonPlot.setOnClickListener(new View.OnClickListener() {
+//             public void onClick(View v) {
+//                 updateParserString("CONT( " + parserString);
+//                 parserEvaluateString();
+//             }
+//         });
 
         updateCurrentText(getString(R.string.text_0));
         updateWebView(getCurrentText());
@@ -230,10 +264,14 @@ public class MainActivity extends AppCompatActivity {
         clearAll();
     }
 
-    private void handleSPKey(){
+    private void handleSPKey() {
         int state = 0;
 
-        if ((getCurrentText().endsWith(getString(R.string.text_0)) && (getCurrentText().length() == 1)) ||
+        if (getCurrentText().endsWith("\u2202/\u2202x") || getCurrentText().endsWith("\u2202/\u2202x ")) {
+            String t = getParserString();
+            t = t.replace("/ x", "diff(");
+            updateParserString(t);
+        } else if ((getCurrentText().endsWith(getString(R.string.text_0)) && (getCurrentText().length() == 1)) ||
                 getCurrentText().endsWith(Utils.ROOT)) {
             state = 1;
         } else if (getCurrentText().startsWith(Utils.LIMIT) &&
@@ -276,6 +314,10 @@ public class MainActivity extends AppCompatActivity {
                 case Utils.ADD:
                     break;
                 case Utils.MULTIPLY:
+                    break;
+                case Utils.VARIABLEX:
+                    text = str;
+                    parserText = strP;
                     break;
                 case Utils.DIVIDE:
                     break;
@@ -334,29 +376,33 @@ public class MainActivity extends AppCompatActivity {
         updateParserString(parserText);
     }
 
-    private void parserEvaluateString(){
+    private void parserEvaluateString() {
 
         String input = getParserString();
         String parserStringCondition;
 
-        Log.d("inputw", input);
+        Log.d("originalInput", input);
 
-        if (getParserString().startsWith("plot ")){
-           // input = input.substring(0, input.indexOf("->"));
-//            Log.d("inputx", input);
+        if (getParserString().startsWith("TAYLOR(")){
+            input = input + ");";
+            Log.d("input", input);
+        } else if (getParserString().startsWith("plot ") || getParserString().startsWith("root( ")){
             parserStringCondition = input.substring(input.indexOf("->"));
-            Log.d("inputy", parserStringCondition);
             parserStringCondition = parserStringCondition.replace("(", "[");
             parserStringCondition = parserStringCondition.replace(")", "]");
             parserStringCondition = parserStringCondition.replace("->", "for x in ");
 
             input = input.substring(0, input.indexOf("->"));
 
-            input =  input + parserStringCondition + ";";
-            Log.d("input", input);
+            input =  getParserString().startsWith("root( ") ? input + parserStringCondition + ");" : input + parserStringCondition + ";";
+//            Log.d("input", input);
 
-        } else if (getParserString().startsWith("diff(") || getParserString().startsWith("INT(")) {
-            input =  input + " : x);";
+        } else if (getParserString().startsWith("diff(") || getParserString().contains("diff(") ) {
+            input =  getParserString() + " : x);";
+            Log.d("diff", input);
+        } else if (getParserString().startsWith("INT(") && getParserString().endsWith(": x")) {
+//            input = input + ");";
+            input = input.substring(0, input.indexOf(":") + 1) + " x);";
         } else if (getParserString().startsWith("TAN(") || getParserString().startsWith("COS(") ||
                 getParserString().startsWith("SIN(") || getParserString().startsWith("LN(")){
             input =  input + " );";
@@ -379,6 +425,8 @@ public class MainActivity extends AppCompatActivity {
         } else {
             input = input + ";";
         }
+
+        Log.d("input", input);
 
         ByteArrayInputStream bais = new ByteArrayInputStream(input.getBytes(Charset.defaultCharset()));
         InputStreamReader reader = new InputStreamReader(bais);
@@ -428,9 +476,6 @@ public class MainActivity extends AppCompatActivity {
             switch (id) {
                 case R.id.btn_clear:
                     clearAll();
-                    break;
-                case R.id.btn_f:
-//                    calFunctions("mFunctionF");
                     break;
                 default:
                     break;
@@ -513,6 +558,9 @@ public class MainActivity extends AppCompatActivity {
                 case R.id.btn_decimal:
                     addOperation(Utils.DECIMAL, ".");
                     break;
+                case R.id.btn_comma:
+                    addOperation(Utils.COMMA, SPACE+","+SPACE+"");
+                    break;
                 case R.id.btn_exponent:
                     addOperation(Utils.EXPONENT, "");
                     break;
@@ -535,7 +583,7 @@ public class MainActivity extends AppCompatActivity {
                     addOperation(Utils.EQUAL, "=");
                     break;
                 case R.id.btn_f:
-                    addOperation(Utils.FUNCTIONF, "x");
+                    addOperation(Utils.FUNCTIONF, "");
                     break;
                 case R.id.btn_x:
                     addOperation(Utils.VARIABLEX, "x");
@@ -547,7 +595,8 @@ public class MainActivity extends AppCompatActivity {
                     addOperation(Utils.FACTORIAL, "!");
                     break;
                 case R.id.btn_diff:
-                    addOperation(Utils.DIFF, "diff(");
+//                    addOperation(Utils.DIFF, "diff(");
+                    addOperation(Utils.DIFF, "");
                     break;
                 case R.id.btn_infinity:
                     addOperation(Utils.INFINITY, "infinity");

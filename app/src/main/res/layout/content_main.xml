@@ -33,6 +33,48 @@
             android:layout_height="match_parent"
             android:layout_weight="1.8" />
 
+    <LinearLayout
+            android:id="@+id/linLayout_0"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="2"
+            android:orientation="horizontal"
+            android:background="#8b8f96">
+
+        <Button
+                android:id="@+id/btn_plot"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Plot"
+                android:padding="3sp"
+                style="@style/MyButtonFunction"/>
+
+        <Button
+                android:id="@+id/btn_f_roots"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Roots"
+                style="@style/MyButtonFunction"/>
+
+        <Button
+                android:id="@+id/btn_f_cont"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Contin.."
+                android:enabled="false"
+                style="@style/MyButtonFunction"/>
+
+        <Button
+                android:id="@+id/btn_f_taylor"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:text="Taylor"
+                style="@style/MyButtonFunction"/>
+    </LinearLayout>
 
     <LinearLayout
             android:id="@+id/linLayout_1"
@@ -132,7 +174,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="@string/btn_exponent"
-                style="@style/MyButton"/>
+                style="@style/MyButton"
+                android:enabled="false"/>
 
 
     </LinearLayout>
@@ -167,6 +210,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="@string/btn_f"
+                android:enabled="false"
                 style="@style/MyButton"/>
 
         <!--<Button-->
@@ -184,6 +228,14 @@
                 android:layout_weight="1"
                 android:text="@string/btn_x"
                 style="@style/MyButton"/>
+
+        <!--<Button-->
+                <!--android:id="@+id/btn_exp"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="match_parent"-->
+                <!--android:layout_weight="1"-->
+                <!--android:text="e"-->
+                <!--style="@style/MyButton"/>-->
 
         <Button
                 android:id="@+id/btn_y"
@@ -402,12 +454,12 @@
             android:background="#8b8f96">
 
         <Button
-                android:id="@+id/btn_plot"
+                android:id="@+id/btn_comma"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="@string/btn_plot"
-                style="@style/MyButtonSpecial"/>
+                android:text=","
+                style="@style/MyButtonNum"/>
 
         <Button
                 android:id="@+id/btn_0"
@@ -431,6 +483,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="@string/btn_equals"
+                android:enabled="false"
                 style="@style/MyButtonNum"/>
 
         <Button
@@ -438,7 +491,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:drawableLeft="@android:drawable/ic_menu_send"/>
+                android:text="Evaluate"
+                android:textSize="12sp"
+                android:textAllCaps="false"
+                android:textStyle="bold"
+                android:backgroundTint="#7fa87f"/>
 
     </LinearLayout>
 

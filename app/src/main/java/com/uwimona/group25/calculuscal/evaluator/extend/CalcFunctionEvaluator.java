@@ -8,5 +8,5 @@ public interface CalcFunctionEvaluator {
 	/*
 	 * Evaluate the given function if possible. Otherwise should return null.
 	 */
-	public CalcObject evaluate(CalcFunction input);
+    CalcObject evaluate(CalcFunction input);
 }

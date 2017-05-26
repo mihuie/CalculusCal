@@ -290,8 +290,8 @@ public final class CALC {
 				symbol.setEvaluator(evaluator);
 				return symbol;
 			}
-			catch (Exception e) {};
-		}
+			catch (Exception e) {}
+        }
 		return null;
 	}
     

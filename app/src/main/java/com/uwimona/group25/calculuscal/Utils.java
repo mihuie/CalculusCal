@@ -22,7 +22,7 @@ public final class Utils {
     final static String LN = "`ln";
     final static String LOG = "`log";
     final static String DECIMAL = ".";
-    final static String EXPONENT = "\u2202x";
+    final static String EXPONENT = "e";
     final static String FUNCTIONF = "f";
     final static String FACTORIAL = "!";
     final static String FUNCTIONG = "g";
@@ -34,15 +34,16 @@ public final class Utils {
     final static String PI = "\u03C0 ";
     final static String ROOT = "\u221A{";
     final static String INFINITY = "\u221E";
-    final static String DIFF = "\u2202y/\u2202x ";
+    final static String DIFF = "\u2202";
     final static String LIMIT = "`lim\u2199{";
     final static String TOWARDS = "\u2192";
+    final static String COMMA = ",";
 
     final static ArrayList<String> basicOperands = new ArrayList<>(Arrays.asList(DIVIDE, MULTIPLY, MINUS, ADD, POWER, EQUAL));
     final static ArrayList<String> advanceOperands = new ArrayList<>(Arrays.asList(LN, COS, SIN, TAN, LOG));
     final static ArrayList<String> noDuplicates = new ArrayList<>(Arrays.asList(LN, COS, SIN, TAN, LOG, DIVIDE,
             MULTIPLY, MINUS, ADD, POWER, EQUAL, DECIMAL, FUNCTIONF, FUNCTIONG, ROOT, INTEGRAL, INFINITY, TOWARDS,
-            EXPONENT, VARIABLEX, VARIABLEY, PI, FACTORIAL));
+            EXPONENT, VARIABLEX, VARIABLEY, PI, FACTORIAL, COMMA));
 
 
     private Utils(){

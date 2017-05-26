@@ -50,10 +50,10 @@ public class CalcDIFF implements CalcFunctionEvaluator {
 		if (obj instanceof CalcFunction) { //input f(x..xn)
 			obj = CALC.SYM_EVAL(obj); //evaluate the function before attempting differentiation
 		}
-		if (obj.isNumber() || (obj instanceof CalcSymbol && !((CalcSymbol)obj).equals(var))) {	//	(d/dx) c = 0
+		if (obj.isNumber() || (obj instanceof CalcSymbol && !obj.equals(var))) {	//	(d/dx) c = 0
 			return CALC.ZERO; 
 		}
-		if (obj instanceof CalcSymbol && ((CalcSymbol)obj).equals(var)) { //	(d/dx) x = 1
+		if (obj instanceof CalcSymbol && obj.equals(var)) { //	(d/dx) x = 1
 			return CALC.ONE;
 		}
 		if (obj.getHeader().equals(CALC.ADD) && ((CalcFunction)obj).size() > 1) { //	(d/dx)(y1+y2+...) = (d/dx)y1 + (d/dx)y2 + ...

@@ -15,10 +15,10 @@ import android.graphics.PointF;
  */
 public interface Plotter {
 
-    public double[] sample(double low, double hi);
+    double[] sample(double low, double hi);
 
-    public void plot(PointF[][] points);
+    void plot(PointF[][] points);
 
-    public void clear();
+    void clear();
 
 }

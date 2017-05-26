@@ -39,7 +39,7 @@ public class CalcDEFINE implements CalcFunctionEvaluator {
 						function.addVariable((CalcSymbol)currentTerm);
 					}
 				}
-				CALC.setDefinedVariable((CalcSymbol)function.getHeader(), input.get(1));
+				CALC.setDefinedVariable(function.getHeader(), input.get(1));
 				return input;
 			}
 			else throw new CalcWrongParametersException("DEFINE -> first parameter must be a symbol");
